@@ -88,6 +88,7 @@ HEADERS += \
     Systems/rendersystem.h \
     Systems/system.h \
     Systems/systemmanager.h \
+    Systems/transformsystem.h \
     Triangulation/regular.h \
     Widgets/entitywidget.h \
     Widgets/transformwidget.h \
@@ -153,6 +154,7 @@ SOURCES += main.cpp \
     Systems/rendersystem.cpp \
     Systems/system.cpp \
     Systems/systemmanager.cpp \
+    Systems/transformsystem.cpp \
     Triangulation/regular.cpp \
     Widgets/entitywidget.cpp \
     Widgets/transformwidget.cpp \

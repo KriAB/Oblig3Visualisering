@@ -16,6 +16,7 @@ class Scene;
 class RenderWindow;
 class MainWindow;
 class Shader;
+class Gravity;
 
 class ComponentSystem : public QOpenGLFunctions_4_1_Core
 {
@@ -53,7 +54,7 @@ public:
     void addTransComp(TransformComponent *transComp);
     void addMeshComp(MeshComponent *meshComp);//...
     void addEmptyEntity(Entity *entity);
-    void addEntity(std::string filename, std::string material, std::string collision);
+    void addEntity(std::string filename, std::string material, std::string collision, gsl::Vector3D position= gsl::Vector3D{0,0,0});
 
     std::vector<Entity *> getEntities() const;
     std::vector<MeshComponent *> getMeshComponents() const;
@@ -63,6 +64,12 @@ public:
     std::vector<SoundComponent *> getSoundComponent() const;
     std::vector<InputComponent *> getInputComponent() const;
     std::vector<RenderComponent *> getRenderComponents() const;
+
+    //For calc behavior on a terrain.
+    void initGravity(int EID);
+    void updateVelocity(int EIDTarget, float deltaTime);
+    void updateHeight(int EIDTarget);
+    void updateHeightAndBarycentricCheck(int EIDTarget);
 private:
     std::vector <MeshComponent*> mMeshComponents; //sortere på Entity ID //til renderSystem
     std::vector <MaterialComponent*> mMaterialComponents; //til renderSystem
@@ -82,6 +89,11 @@ private:
     int numEntity{0};
 
     Scene *mScene{nullptr};
+
+
+    //For Barycentric:
+    Gravity *mGravity = nullptr;
+    std::vector<gsl::Vector3D> neighbours;
 };
 
 #endif // COMPONENTSYSTEM_H

@@ -550,4 +550,11 @@ namespace gsl
     {
         return matrix[index];
     }
+
+    //For barycentric coordinates
+    void Matrix4x4::setHeightY(GLfloat y)
+    {
+        matrix[7] = y;
+    }
+
 } //namespace

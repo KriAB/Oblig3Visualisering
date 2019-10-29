@@ -5,10 +5,10 @@ Gravity::Gravity()
 
 }
 
-void Gravity::update(gsl::Vector3D mTargetCoordinates)
+bool Gravity::update(gsl::Vector3D mTargetCoordinates)
 {
 
-   // if(neighbours.size() != 0)
+    if(neighbours.size() != 0)
     checkBarycentricCoordinates(mTargetCoordinates);
 
 
@@ -23,6 +23,7 @@ void Gravity::update(gsl::Vector3D mTargetCoordinates)
 //        std::cout << "Alpha :              " << alpha << std::endl;
     }
 
+    return isOnTriangle;
 }
 
 void Gravity::newtonsSecondLawAcceleration()
@@ -33,7 +34,7 @@ void Gravity::newtonsSecondLawAcceleration()
 
 void Gravity::checkBarycentricCoordinates(gsl::Vector3D mTargetCoordinates)
 { //isOnTriangle = false;
-    setTarget(mTargetCoordinates);
+  //  setTarget(mTargetCoordinates, );
     gsl::Vector3D barCenCoor;
     gsl::Vector3D p1;
     gsl::Vector3D p2;
@@ -219,9 +220,9 @@ void Gravity::checkBarycentricCoordinates(gsl::Vector3D mTargetCoordinates)
     }
 }
 
-void Gravity::checkBarycentricCoordinatesNoNeighbors(gsl::Vector3D mTargetCoordinates)
+void Gravity::checkBarycentricCoordinatesNoNeighbours(gsl::Vector3D mTargetCoordinates)
 {
-    setTarget(mTargetCoordinates);
+   // setTarget(mTargetCoordinates);
     gsl::Vector3D barCenCoor;
     gsl::Vector3D p1;
     gsl::Vector3D p2;
@@ -277,7 +278,7 @@ float Gravity::calcHeight(gsl::Vector3D baryCoor, gsl::Vector3D p1, gsl::Vector3
 {
     float temp;
 
-    temp = (p1.y*baryCoor.x + p2.y *baryCoor.y + p2.y*baryCoor.z) + radius;
+    temp = (p1.y*baryCoor.x + p2.y *baryCoor.y + p3.y*baryCoor.z);
 
     return temp;
 }

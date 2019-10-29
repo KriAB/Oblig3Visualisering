@@ -4,6 +4,7 @@
 #include "componentsystem.h"
 #include "collisionsystem.h"
 #include "rendersystem.h"
+#include "transformsystem.h"
 
 #include "renderwindow.h"
 #include "shader.h"
@@ -20,6 +21,7 @@ SystemManager::SystemManager(RenderWindow *renderwindow, MainWindow *mainwindow,
     mCollisionSystem = new CollisionSystem(mComponentSystem);
     mInputSystem = new InputSystem(mComponentSystem);
     mRenderSystem = new RenderSystem(mComponentSystem);
+    mTransformSystem = new TransformSystem(mComponentSystem);
 }
 
 SystemManager::~SystemManager()
@@ -33,6 +35,9 @@ SystemManager::~SystemManager()
     delete mRenderSystem;
     mRenderSystem = nullptr;
 
+    delete mTransformSystem;
+    mTransformSystem = nullptr;
+
     delete  mComponentSystem;
     mComponentSystem = nullptr;
 }
@@ -40,6 +45,7 @@ SystemManager::~SystemManager()
 void SystemManager::update()
 {
      mRenderSystem->update();
+
 }
 
 ComponentSystem *SystemManager::componentSystem()

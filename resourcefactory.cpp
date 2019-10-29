@@ -11,6 +11,10 @@
 #include "octahedronball.h"
 #include "soundmanager.h"
 #include "soundsource.h"
+#include "Physics/gravity.h"
+#include "Triangulation/regular.h"
+#include "lasloader.h"
+
 
 #include <chrono>   //for sleep_for
 #include <thread>   //for sleep_for
@@ -24,8 +28,10 @@ ResourceFactory::ResourceFactory()
 
 MeshComponent* ResourceFactory::makeResource(std::string fileName)
 {
+    //Sette alt tilbake til 0, så objektet ikke får verdier fra et tidligere objekt.
     mVertices.clear();
     mIndices.clear();
+    neighbours.clear();
     mVAO = 0;
     mVBO = 0;
     mEAB = 0;
@@ -61,6 +67,8 @@ MeshComponent* ResourceFactory::makeResource(std::string fileName)
                 meshComp->setEAB(meshComponents.at(i)->eAB());
                 meshComp->indicesSize = meshComponents.at(i)->indicesSize;
                 meshComp->verticesSize = meshComponents.at(i)->verticesSize;
+                meshComp->setNeighbours(meshComponents.at(i)->neighbours());
+                meshComp->setSmalestBiggestXYZ(meshComponents.at(i)->getSmallestBiggestXYZ());
                 meshComp->eID = eID;
                 meshComponents.push_back(meshComp);
 
@@ -137,6 +145,28 @@ MeshComponent* ResourceFactory::makeResource(std::string fileName)
             meshComponents.push_back(meshComp);
             initOneObject();
         }
+        //Oblig 2 Del 1 - oppgave 1
+        if(fileName == "Plane2")
+        {
+            readTxtFileWithNeighbours("planeWithNeighbours.txt");
+            //makePlane2();
+            setMeshComponent();
+            meshComponents.push_back(meshComp);
+            initOneObject();
+        }
+        if(fileName == "LAS")
+        {
+           // readTxtFileWithNeighbours("32LasFileVertices20.txt");
+
+          //  readTxtFileWithNeighbours("32LasFileVertices20NB.txt");
+
+            readTxtFileWithNeighbours("32LasFileVertices20FlippedNB.txt");
+            //makeLAS(fileName);
+            setMeshComponent();
+             //meshComp->drawTriangles = false;
+            meshComponents.push_back(meshComp);
+            initOneObject();
+        }
 
         setSmallestBiggestXYZ();
         meshComp->setSmalestBiggestXYZ(smallestBiggestXYZ);
@@ -149,10 +179,184 @@ MeshComponent* ResourceFactory::makeResource(std::string fileName)
 
     return meshComp;
 }
+
+//Oblig 2
+void ResourceFactory::makePlane2()
+{
+    float height1 = 0.5; //4 points
+    float height2 = 2; //3 points
+    float height3 = 2; //1 point
+    float height4 = 0.f; //6 points
+    float height5 = 0.5; // 4 points
+    float height6 = 2; // 2 points
+    float height7 = 2;// 3 points
+    float height8 = 2; // 1 point
+    float lenght =30;
+    Vertex v{};
+    //T0
+    v.set_xyz(0,height1,lenght/2); v.set_rgb(1,0,0);
+    mVertices.push_back(v);
+    v.set_xyz(lenght/2,height2,0); v.set_rgb(1,0,0);
+    mVertices.push_back(v);
+    v.set_xyz(0,height3,0); v.set_rgb(1,0,0);
+    mVertices.push_back(v);
+    neighbours.push_back(gsl::Vector3D{-1,-1,1}); //starter på 1
+    //T1
+    v.set_xyz(lenght/2,height4,lenght/2); v.set_rgb(0,1,0);
+    mVertices.push_back(v);
+    v.set_xyz(lenght/2,height2,0); v.set_rgb(0,1,0);
+    mVertices.push_back(v);
+    v.set_xyz(0,height1,lenght/2); v.set_rgb(0,1,0);
+    mVertices.push_back(v);
+    neighbours.push_back(gsl::Vector3D{0,6,2}); //starter på 1
+
+    //T2
+    v.set_xyz(lenght/2,height4,lenght/2); v.set_rgb(0,0,1);
+    mVertices.push_back(v);
+    v.set_xyz(lenght,height5,0); v.set_rgb(0,0,1);
+    mVertices.push_back(v);
+    v.set_xyz(lenght/2,height2,0); v.set_rgb(0,0,1);
+    mVertices.push_back(v);
+    neighbours.push_back(gsl::Vector3D{-1,1,3}); //starter på 1
+
+    //T3
+    v.set_xyz(lenght,height6,lenght/2); v.set_rgb(1,0,0);
+    mVertices.push_back(v);
+    v.set_xyz(lenght,height5,0); v.set_rgb(1,0,0);
+    mVertices.push_back(v);
+    v.set_xyz(lenght/2,height4,lenght/2); v.set_rgb(1,0,0);
+    mVertices.push_back(v);
+    neighbours.push_back(gsl::Vector3D{2,4,-1}); //starter på 1
+
+    //T4
+    v.set_xyz(lenght,height5,lenght); v.set_rgb(0,1,0);
+    mVertices.push_back(v);
+    v.set_xyz(lenght,height6,lenght/2); v.set_rgb(0,1,0);
+    mVertices.push_back(v);
+    v.set_xyz(lenght/2,height4,lenght/2); v.set_rgb(0,1,0);
+    mVertices.push_back(v);
+    neighbours.push_back(gsl::Vector3D{3,5,-1}); //starter på 1
+
+    //T5
+    v.set_xyz(lenght,height5,lenght); v.set_rgb(0,0,1);
+    mVertices.push_back(v);
+    v.set_xyz(lenght/2,height4,lenght/2); v.set_rgb(0,0,1);
+    mVertices.push_back(v);
+    v.set_xyz(lenght/2,height7,lenght); v.set_rgb(0,0,1);
+    mVertices.push_back(v);
+    neighbours.push_back(gsl::Vector3D{6,-1,5}); //starter på 1
+
+    //T6
+    v.set_xyz(lenght/2,height7,lenght); v.set_rgb(1,0,0);
+    mVertices.push_back(v);
+    v.set_xyz(lenght/2,height4,lenght/2); v.set_rgb(1,0,0);
+    mVertices.push_back(v);
+    v.set_xyz(0,height1,lenght/2); v.set_rgb(1,0,0);
+    mVertices.push_back(v);
+    neighbours.push_back(gsl::Vector3D{1,7,5}); //starter på 1
+
+    //T7
+    v.set_xyz(0,height8,lenght); v.set_rgb(0,1,0);
+    mVertices.push_back(v);
+    v.set_xyz(lenght/2,height7,lenght); v.set_rgb(0,1,0);
+    mVertices.push_back(v);
+    v.set_xyz(0,height1,lenght/2); v.set_rgb(0,1,0);
+    mVertices.push_back(v);
+    neighbours.push_back(gsl::Vector3D{6,-1,-1}); //starter på 1
+
+  //  writeTxtFileNeighbours("planeWithNeighbours.txt");
+
+}
+
+void ResourceFactory::makeLAS(std::string filename)
+{
+    Regular reg;
+
+//     gsl::LASLoader lasloader{"../INNgine2019/Assets/Meshes/32-1-498-104-61.las"};
+//    // Iterate in certain range:
+//     std::vector<gsl::Vector3D> vecFromLAS;
+
+//    int numOfPoints = lasloader.pointCount();
+//    std::cout << "NumOfPoints "<<numOfPoints << std::endl;
+//    vecFromLAS.reserve(numOfPoints-600000);
+//     //Del 2 - oppg 2:
+//     //Konverter høydedata fra valgt fil til eget filformat(xyz linjevis)
+//    for (auto point = lasloader.begin() + 0; point != lasloader.end() - 600000; ++point)
+//    {
+//        gsl::Vector3D temp(point->x,point->z, point->y);
+//        vecFromLAS.push_back(temp);
+//    }
+//    //writeTxtFileVector3("LASmap1.txt", vecFromLAS);
+
+
+
+//    //Del 2 - oppg 3:
+//    //Lag en triangulering.
+//    reg.setLASCoords(vecFromLAS);
+//    reg.makeTriangles(10,numOfPoints);
+//    std::vector <gsl::Vector3D> triangleTemp = reg.getFinalTriangles();
+
+//    for(int i = 0; i < triangleTemp.size(); i++)
+//    {
+//        gsl::Vector3D norm =triangleTemp.at(i);
+//        norm.normalize();
+//                mVertices.push_back(Vertex(triangleTemp[i].x, triangleTemp[i].y, triangleTemp[i].z,norm.x,norm.y,norm.z));
+//    }
+
+    //    for(int i = 0; i < vecFromLAS.size(); i++)
+    //    {
+    //        gsl::Vector3D norm =vecFromLAS.at(i);
+    //        norm.normalize();
+    //              //  mVertices.push_back(Vertex(vecFromLAS[i].x, vecFromLAS[i].y, vecFromLAS[i].z,norm.x,norm.y,norm.z));
+    //                  mVertices.push_back(Vertex(norm.x, norm.y, norm.z,norm.x,norm.y,norm.z));
+    //    }
+
+    // Iterate in certain range with normalized output:
+//    for (auto point = lasloader.begin() + 500; point != lasloader.end() - 25; ++point)
+//    {
+//        std::cout << "Point: (" << point->xNorm() << ", " << point->yNorm() << ", " << point->zNorm() << ")" << std::endl;
+//        mVertices.push_back(Vertex(point->xNorm(),point->yNorm(), point->zNorm(),  1,1,0));
+//    }
+
+//----- Read and write LAS to txt file
+ //    writeLASToTxtFileVector3("32LasFileFlipped");
+// ----- Sort file
+    std::vector<gsl::Vector3D> temp = readTxtFileVec3("32LasFileNormFlippedEvery20.txt");
+     std::vector<gsl::Vector3D> tempTemp;
+     tempTemp.reserve(temp.size());
+    for(int i = 0; i <temp.size() ; i++)
+    {
+        tempTemp.push_back(temp.at(i));
+    }
+    reg.setLASCoords(tempTemp);
+//   // reg.sort();
+////// ----- Make triangles
+    reg.makeTriangles(10,temp.size());
+    int sizeOfTri = reg.triangleSize();
+    std::vector<gsl::Vector3D> triangles;
+    triangles.reserve(sizeOfTri);
+    triangles = reg.getFinalTriangles();
+
+    mVertices.empty();
+    mVertices.resize(0);
+    for(auto tri :triangles)
+    {
+        mVertices.push_back(Vertex(tri.x*100, tri.y*100 -70,tri.z*100, tri.x,tri.y,tri.z));
+    }
+
+    neighbours.reserve(reg.neighbourSize());
+    neighbours = reg.getNeighbours();
+
+writeTxtFileNeighbours("32LasFileVertices20FlippedNB.txt");
+
+
+}
+
 void ResourceFactory::setMeshComponent()
 {
     meshComp->setVertices(mVertices);
     meshComp->setIndices(mIndices);
+    meshComp->setNeighbours(neighbours);
 }
 
 TransformComponent *ResourceFactory::setTransComponent(gsl::Vector3D translate, float scale)
@@ -566,6 +770,9 @@ ResourceFactory::~ResourceFactory()
     delete mRenderWindow;
     mRenderWindow = nullptr;
 
+    delete mGravity;
+    mGravity = nullptr;
+
 }
 void ResourceFactory::init()
 {
@@ -889,7 +1096,154 @@ void ResourceFactory::readTxtFile(std::string filename) {
     }
 }
 
+//Del 2 - Oppgave 2
+void ResourceFactory::writeLASToTxtFileVector3(std::string filename)
+{
+    filename = "32LasFileNormFlippedEvery20.txt";
+    std::ofstream ut;
+    ut.open(filename.c_str());
 
+    Regular reg;
+
+     gsl::LASLoader lasloader{"../INNgine2019/Assets/Meshes/32-1-498-104-61.las"};
+    // Iterate in certain range:
+
+    if (ut.is_open())
+    {
+        auto n =lasloader.pointCount()/20;
+        gsl::Vector3D vec3;
+        ut << n << std::endl;
+        for (auto it=lasloader.begin(); it != lasloader.end(); it=it+19)
+        {
+              ut << it->xNorm() << ' ' << it->zNorm()  << ' ' << it->yNorm() <<std::endl;
+        }
+        ut.close();
+    }
+}
+
+void ResourceFactory::readTxtFileWithNeighbours(std::string filename)
+{
+    std::ifstream inn;
+    std::string fileWithPath = gsl::projectFolderName + "VisAssets/" + filename;
+
+    inn.open(fileWithPath);
+
+    if (inn.is_open()) {
+        int numberOfVertices;
+        int numberOfNeighbours;
+        Vertex vertex;
+        gsl::Vector3D neigh;
+        inn >> numberOfVertices;
+        inn >> numberOfNeighbours;
+        mVertices.reserve(numberOfVertices);
+        neighbours.reserve(numberOfNeighbours);
+        for (int i=0; i<numberOfVertices; i++) {
+            inn >> vertex;
+            mVertices.push_back(vertex);
+        }
+        for (int i=0; i<numberOfNeighbours; i++) {
+            inn >> neigh;
+            neighbours.push_back(neigh);
+        }
+
+        inn.close();
+        qDebug() << "Factory file read: " << QString::fromStdString(filename);
+    }
+    else
+    {
+        qDebug() << "Could not open file for reading: " << QString::fromStdString(filename);
+    }
+
+}
+
+std::vector<gsl::Vector3D> ResourceFactory::readTxtFileVec3(std::string filename)
+{
+    std::ifstream inn;
+    std::string fileWithPath = gsl::assetFilePath + "Meshes/" + filename;
+
+    inn.open(fileWithPath);
+
+  std::vector <gsl::Vector3D> vec3;
+    if (inn.is_open()) {
+        int n;
+        gsl::Vector3D vec;
+        inn >> n;
+        vec3.reserve(n);
+        for (int i=0; i<n; i++) {
+            inn >> vec;
+            vec3.push_back(vec);
+        }
+        inn.close();
+        qDebug() << "TriangleSurface file read: " << QString::fromStdString(filename);
+    }
+    else
+    {
+        qDebug() << "Could not open file for reading: " << QString::fromStdString(filename);
+    }
+    return vec3;
+}
+
+void ResourceFactory::writeTxtFileNeighbours(std::string filename)
+{
+    std::ofstream ut;
+    ut.open(filename.c_str());
+
+    if (ut.is_open())
+    {
+        auto n = mVertices.size();
+        Vertex vertex;
+        ut << n << std::endl;
+
+        gsl::Vector3D neigh;
+        n = neighbours.size();
+        ut << n << std::endl;
+
+        for (auto it=mVertices.begin(); it != mVertices.end(); it++)
+        {
+            vertex = *it;
+            ut << vertex << std::endl;
+        }
+
+        for(auto it = neighbours.begin(); it != neighbours.end(); it++)
+        {
+            neigh = *it;
+            ut << neigh << std::endl;
+        }
+        ut.close();
+    }
+}
+
+void ResourceFactory::move(int mEID, gsl::Vector3D translate, bool rotate, gsl::Vector3D rotAxis, GLfloat deg)
+{
+    for(auto trans: transformComponents)
+    {
+        if(trans->eID == mEID)
+        {
+            trans->translate(translate);
+            Entity *temp = entities.at(mEID)->getChild();
+            if(temp != nullptr)
+            {
+                transformComponents.at(temp->eID)->translate(translate);
+            }
+        }
+
+        if(rotate == true)
+        {
+            if(rotAxis.x > 0.01f || rotAxis.x < 0.01f)
+            {
+                trans->rotateX(deg);
+            }
+            if(rotAxis.y > 0.01f || rotAxis.y < 0.01f)
+            {
+                trans->rotateY(deg);
+            }
+            if(rotAxis.z > 0.01f || rotAxis.z < 0.01f)
+            {
+                trans->rotateZ(deg);
+            }
+        }
+    }
+}
 
 void ResourceFactory::addChild(int aEID, int bEID)
 {
@@ -918,3 +1272,45 @@ void ResourceFactory::move(int mEID, gsl::Vector3D translate)
         }
     }
 }
+
+void ResourceFactory::initGravity()
+{
+    mGravity = new Gravity;
+    mGravity->setTriangles(mVertices,neighbours);
+
+
+}
+
+void ResourceFactory::updateGravity(int EIDTarget, float deltaTime)
+{
+
+//    mGravity->setTarget(transformComponents.at(EIDTarget)->position(), );
+
+//    mGravity->update(transformComponents.at(EIDTarget)->position());
+
+//    gsl::Vector3D acceleration = mGravity->getAcceleration();
+//    if(mGravity->isOnTriangle == true)
+//    {
+
+//        transformComponents.at(EIDTarget)->setVelocity(transformComponents.at(EIDTarget)->getVelocity() + acceleration*deltaTime);
+//        transformComponents.at(EIDTarget)->translate(transformComponents.at(EIDTarget)->getVelocity());
+//    }
+//    else
+//    {
+
+//        transformComponents.at(EIDTarget)->matrix().setPosition(transformComponents.at(EIDTarget)->getStartPosition().x,
+//                                                                transformComponents.at(EIDTarget)->getStartPosition().y,
+//                                                                transformComponents.at(EIDTarget)->getStartPosition().z);
+//        transformComponents.at(EIDTarget)->setVelocity(gsl::Vector3D(0,0,0));
+//    }
+}
+
+void ResourceFactory::setHeightAfterTriangles(int EID)
+{
+
+    float heigth = mGravity->getHeight();
+    transformComponents.at(EID)->matrix().setHeightY(heigth);
+    // std::cout << "Ball height: " << transformComponents.at(EID)->matrix().getPosition().y << "Calculated height: " << heigth << std::endl;
+
+}
+

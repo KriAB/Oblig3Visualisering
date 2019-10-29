@@ -34,6 +34,10 @@ namespace gsl
         GLfloat operator[](const unsigned int index);
 
 
+        //For setting the height in barycentric coordinates:
+            void setHeightY(GLfloat y);
+
+
         // Functions
         Matrix4x4 identity();
         void setToIdentity();

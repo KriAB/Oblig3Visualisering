@@ -63,3 +63,18 @@ float MeshComponent::getLengthZ()
     float zMax = smallestBiggestXYZ.at(5);
     return zMax - zMin;
 }
+
+std::vector<gsl::Vector3D> MeshComponent::neighbours() const
+{
+    return mNeighbours;
+}
+
+void MeshComponent::setNeighbours(std::vector<gsl::Vector3D> nb)
+{
+    mNeighbours = nb;
+}
+
+float MeshComponent::radiusY()
+{
+    return abs(getLengthY()/2);
+}

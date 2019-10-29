@@ -8,11 +8,11 @@ class Gravity
 public:
     Gravity();
 
-    void update(gsl::Vector3D mTargetCoordinates);
+    bool update(gsl::Vector3D mTargetCoordinates);
     void newtonsSecondLawAcceleration(); //Ligning 7
     void setTarget(gsl::Vector3D mTargetCoordinates){targetCoordinates = mTargetCoordinates;}
     void checkBarycentricCoordinates(gsl::Vector3D mTargetCoordinates);
-    void checkBarycentricCoordinatesNoNeighbors(gsl::Vector3D mTargetCoordinates);
+    void checkBarycentricCoordinatesNoNeighbours(gsl::Vector3D mTargetCoordinates);
     gsl::Vector3D calcNormalForce();
     gsl::Vector3D calcGravityForce();
     float calcHeight(gsl::Vector3D baryCoor, gsl::Vector3D p1, gsl::Vector3D p2, gsl::Vector3D p3);

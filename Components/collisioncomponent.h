@@ -44,6 +44,7 @@ public:
      std::vector<int> indices() const;
      void setIndices(const std::vector<int> &indices);
 
+     bool hasGravity{false};
 
 private:
      float lengthX{0};

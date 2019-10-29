@@ -27,6 +27,8 @@ class TransformComponent;
 class MaterialComponent;
 class SoundComponent;
 class CollisionComponent;
+class Gravity;
+
 class ResourceFactory : public QOpenGLFunctions_4_1_Core
 {
 public:
@@ -47,6 +49,12 @@ public:
 
     void addChild(int aEID, int bEID);
     void move(int mEID, gsl::Vector3D translate);
+
+    void move(int mEID, gsl::Vector3D translate, bool rotate, gsl::Vector3D rotAxis, GLfloat deg);
+    //For moving on a terrain:
+    void initGravity();
+    void updateGravity(int EIDTarget, float deltaTime);
+    void setHeightAfterTriangles(int EID);
 
 
    // gsl::Matrix4x4 mMatrix;
@@ -84,6 +92,12 @@ public:
 
     std::vector<Entity *> getEntities() const;
 
+    void writeTxtFileNeighbours(std::string filename);
+    std::vector<gsl::Vector3D> readTxtFileVec3(std::string filename);
+    void readTxtFileWithNeighbours(std::string filename);
+    void writeLASToTxtFileVector3(std::string filename);
+    void makePlane2();
+    void makeLAS(std::string filename);
 private:
 
     std::vector<Vertex> makeBS(float radius);
@@ -118,6 +132,12 @@ protected:
     void makeSkybox();
     void makeXYZ();
     void makePlane();
+
+
+
+    //Moving on a terrain:
+     Gravity *mGravity = nullptr;
+     std::vector<gsl::Vector3D> neighbours;
 
     std::vector<Vertex> mVertices;   //This is usually not needed after object is made
     std::vector<GLuint> mIndices;    //This is usually not needed after object is made

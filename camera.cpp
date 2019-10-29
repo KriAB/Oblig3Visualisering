@@ -41,6 +41,7 @@ void Camera::updateForwardVector()
     mUp.normalize();
     mForward = mUp^mRight;
 
+   // std::cout << "Forward: " << mForward << " Right: " << mRight << " Up " << mUp << std::endl;
     updateRightVector();
 }
 

@@ -4,10 +4,12 @@
 #include "renderwindow.h"
 #include "mainwindow.h"
 #include "shader.h"
+#include "Physics/gravity.h"
 
 ComponentSystem::ComponentSystem(RenderWindow *renderwindow, MainWindow *mainWindow, Shader * shaderProgram) : mRenderWindow(renderwindow), mMainWindow(mainWindow),   mShaderProgram{shaderProgram}
 {
     mResourceFactory = new ResourceFactory;
+    mResourceFactory->mRenderWindow = mRenderWindow;
     makeScene();
     mScene = new Scene(this);
 }
@@ -56,7 +58,7 @@ void ComponentSystem::sortByEID()
 
 void ComponentSystem::saveScene(std::string name)
 {
-       mScene->writeScene(name);
+    mScene->writeScene(name);
 }
 
 void ComponentSystem::loadScene(std::string name)
@@ -66,27 +68,31 @@ void ComponentSystem::loadScene(std::string name)
 
 void ComponentSystem::makeScene()
 {
-    mResourceFactory->mRenderWindow = mRenderWindow;
+
 
     mEntities.push_back(new Entity(0));
-    mMeshComponents.push_back( mResourceFactory->makeResource("Cube"));
+    mMeshComponents.push_back(mResourceFactory->makeResource("Plane2"));
     mMaterialComponents.push_back(mResourceFactory->setMatComponent(mShaderProgram[0]));
     mTransformComponents.push_back(mResourceFactory->setTransComponent(gsl::Vector3D(0,0,0),0));
-    mCollisionComponents.push_back(mResourceFactory->makeCollisionComponent("OBB",0));
+    // mCollisionComponents.push_back(mResourceFactory->makeCollisionComponent("OBB",0));
     mRenderComponents.push_back(new RenderComponent(0,mMeshComponents.at(0),mMaterialComponents.at(0),mTransformComponents.at(0)));
     mMainWindow->addEntityInWorldContentList(0);
+    initGravity(0);
     numEntity++;
 
-    mEntities.push_back(new Entity(1));
-    mMeshComponents.push_back(mResourceFactory->makeResource("Cube"));
-    mTransformComponents.push_back( mResourceFactory->setTransComponent(gsl::Vector3D(0,1,0),0));
-    mMaterialComponents.push_back( mResourceFactory->setMatComponent(mShaderProgram[0]));
-    mCollisionComponents.push_back( mResourceFactory->makeCollisionComponent("OBB",1));
-    mRenderComponents.push_back(new RenderComponent(1,mMeshComponents.at(1),mMaterialComponents.at(1),mTransformComponents.at(1)));
-    mMainWindow->addEntityInWorldContentList(1);
-
+    //Item 1 i forhold til b-spline
+    addEntity("Cube", "Default", "OBB", gsl::Vector3D{2,2,2});
+    updateHeightAndBarycentricCheck(1);
     //mResourceFactory->addChild(0,1);
-    numEntity++;
+
+
+    //Item 2 i forhold til b-spline
+    addEntity("Cube", "Default", "OBB", gsl::Vector3D{20,2,26});
+    updateHeightAndBarycentricCheck(2);
+
+    //Item 3 i forhold til b-spline
+    addEntity("Cube", "Default", "OBB", gsl::Vector3D{4,2,26});
+    updateHeightAndBarycentricCheck(3);
 
 }
 
@@ -189,16 +195,17 @@ void ComponentSystem::addEmptyEntity(Entity *entity)
     numEntity++;
 }
 
-void ComponentSystem::addEntity(std::string filename, std::string material, std::string collision) // må adde flere ting som hvilke kollisjon osv.
+void ComponentSystem::addEntity(std::string filename, std::string material, std::string collision, gsl::Vector3D position) // må adde flere ting som hvilke kollisjon osv.
 {
     mEntities.push_back(new Entity(numEntity));
     mMeshComponents.push_back( mResourceFactory->makeResource(filename));
     mMaterialComponents.push_back(mResourceFactory->setMatComponent(mShaderProgram[0]));
-    mTransformComponents.push_back(mResourceFactory->setTransComponent(gsl::Vector3D(0,0,0),0));
+    mTransformComponents.push_back(mResourceFactory->setTransComponent(position,0));
     mCollisionComponents.push_back(mResourceFactory->makeCollisionComponent(collision,numEntity));
     mRenderComponents.push_back(new RenderComponent(numEntity,getMeshCompWithEId(numEntity),getMatCompWithEId(numEntity),getTransCompWithEId(numEntity)));
     mMainWindow->addEntityInWorldContentList(numEntity);
     numEntity++;
+
 
 }
 
@@ -247,4 +254,79 @@ Entity *ComponentSystem::getEntityWithEId(int EID)
         }
     }
     return nullptr;
+}
+
+//Her setter man hvilket objekt (plan) som feks. "kulen" skal sjekke om den er innenfor. Må settes før man updater gravity og height
+void ComponentSystem::initGravity(int EID)
+{
+    mGravity = new Gravity;
+    mGravity->setTriangles(getMeshCompWithEId(EID)->vertices(),getMeshCompWithEId(EID)->neighbours());
+    CollisionComponent *temp = getCollCompWithEId(EID);
+    if(temp != nullptr)
+    {
+        temp->hasGravity = true;
+    }
+    else
+    {
+        //Bør adde collision?
+    }
+
+}
+
+
+void ComponentSystem::updateHeightAndBarycentricCheck(int EIDTarget)
+{
+
+    if( mGravity->update(getTransCompWithEId(EIDTarget)->position()))
+    {
+        float heigth = mGravity->getHeight();
+
+        std::cout << "Cube " <<EIDTarget << " height: " << getTransCompWithEId(EIDTarget)->matrix().getPosition().y << "Calculated height: " << heigth << std::endl;
+        getTransCompWithEId(EIDTarget)->matrix().setHeightY(heigth+getMeshCompWithEId(EIDTarget)->radiusY());
+
+    }
+
+}
+
+//Her oppdaterer man "kulen". Denne funksjonen er ikke for en player. Kun for å simulere en kule som ruller på et ujevnt plan.
+void ComponentSystem::updateVelocity(int EIDTarget, float deltaTime)
+{
+
+
+    if(getCollCompWithEId(EIDTarget)->hasGravity)
+    {
+        // mGravity->setTarget(getTransCompWithEId(EIDTarget)->position(), getMeshCompWithEId(EIDTarget)->neighbours());
+
+        //mGravity->setRadius(float) fra mesh, for å sette en annen enn 1.2
+        mGravity->update(getTransCompWithEId(EIDTarget)->position());
+
+        gsl::Vector3D acceleration = mGravity->getAcceleration();
+        if(mGravity->isOnTriangle == true)
+        {
+
+            getTransCompWithEId(EIDTarget)->setVelocity(getTransCompWithEId(EIDTarget)->getVelocity() + acceleration*deltaTime);
+            getTransCompWithEId(EIDTarget)->translate(getTransCompWithEId(EIDTarget)->getVelocity());
+            updateHeight(EIDTarget);
+        }
+        else
+        {
+
+            getTransCompWithEId(EIDTarget)->matrix().setPosition(getTransCompWithEId(EIDTarget)->getStartPosition().x,
+                                                                 getTransCompWithEId(EIDTarget)->getStartPosition().y,
+                                                                 getTransCompWithEId(EIDTarget)->getStartPosition().z);
+            getTransCompWithEId(EIDTarget)->setVelocity(gsl::Vector3D(0,0,0));
+        }
+
+    }
+}
+//This is for use with updateVelocity(...);
+void ComponentSystem::updateHeight(int EIDTarget)
+{
+    if(getCollCompWithEId(EIDTarget)->hasGravity)
+    {
+        float heigth = mGravity->getHeight();
+        getTransCompWithEId(EIDTarget)->matrix().setHeightY(heigth + getMeshCompWithEId(EIDTarget)->radiusY());
+        // std::cout << "Ball height: " << transformComponents.at(EID)->matrix().getPosition().y << "Calculated height: " << heigth << std::endl;
+
+    }
 }

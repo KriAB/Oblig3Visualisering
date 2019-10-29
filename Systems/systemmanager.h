@@ -6,6 +6,7 @@ class RenderSystem;
 class ComponentSystem;
 class InputSystem;
 class CollisionSystem;
+class TransformSystem;
 
 class Shader;
 class MainWindow;
@@ -28,6 +29,7 @@ private:
     ComponentSystem * mComponentSystem{nullptr};
     InputSystem *mInputSystem{nullptr};
     CollisionSystem * mCollisionSystem{nullptr};
+    TransformSystem * mTransformSystem{nullptr};
 
     MainWindow *mMainWindow{nullptr};
     RenderWindow *mRenderWindow{nullptr};

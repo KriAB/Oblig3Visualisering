@@ -99,9 +99,9 @@ gsl::Vector3D MousePicker::getPointOnRay(gsl::Vector3D ray, float distance)
 
 int MousePicker::intersectedEntity()
 {
-    std::vector<TransformComponent*>tempTrans = mSystemManager->componentSystem()->getTransformComponents();
-    std::vector<MeshComponent*> tempMeshes = mSystemManager->componentSystem()->getMeshComponents();
-    std::vector<CollisionComponent*> tempColl = mSystemManager->componentSystem()->getCollisionComponents();
+
+
+    ComponentSystem *compS = mSystemManager->componentSystem();
 
     gsl::Vector3D tempIntersectionCoord = currentRay;
 
@@ -109,8 +109,12 @@ int MousePicker::intersectedEntity()
  //   std::cout << "IntersectionPoint: " << tempIntersectionCoord <<std::endl;
 
     //sjekke at Objektet har kollisjon, hvis ikke bruke meshen. Må tenke på scale
-    for(int i = 0; i <tempTrans.size(); i++)
+    for(int i = 0; i <compS->getTransformComponents().size(); i++)
     {
+
+        TransformComponent* tempTrans = compS->getTransCompWithEId(i);
+        MeshComponent* tempMesh = compS->getMeshCompWithEId(i);
+        CollisionComponent* tempColl = compS->getCollCompWithEId(i);
         //Loop som sjekker for forskjellige lengder til rayen
         for(float j = 0; j < rayLenght; j ++)
         {
@@ -118,7 +122,7 @@ int MousePicker::intersectedEntity()
 
             tempIntersectionCoord = getPointOnRay(currentRay,j);
 
-            if(tempColl.at(i) != nullptr)
+            if(tempColl!= nullptr)
             {
 //                if(tempTrans.at(i)->position().x - tempIntersectionCoord.x < tempColl.at(i)->getLengthX()/2 && tempTrans.at(i)->position().x - tempIntersectionCoord.x > -tempColl.at(i)->getLengthX()/2 )
 //                    if(tempTrans.at(i)->position().y - tempIntersectionCoord.y < tempColl.at(i)->getLengthY()/2 && tempTrans.at(i)->position().y - tempIntersectionCoord.y > -tempColl.at(i)->getLengthY()/2 )
@@ -130,26 +134,26 @@ int MousePicker::intersectedEntity()
 //                        }
 
                 //Må være true for alle x,y,z
-                if(tempTrans.at(i)->position().x - ((tempColl.at(i)->getLengthX())/2) < tempIntersectionCoord.x && tempTrans.at(i)->position().x + tempColl.at(i)->getLengthX()/2 > tempIntersectionCoord.x)
+                if(tempTrans->position().x - ((tempColl->getLengthX())/2) < tempIntersectionCoord.x && tempTrans->position().x + tempColl->getLengthX()/2 > tempIntersectionCoord.x)
                 {
-                    if(tempTrans.at(i)->position().y - ((tempColl.at(i)->getLengthY())/2) < tempIntersectionCoord.y && tempTrans.at(i)->position().y + tempColl.at(i)->getLengthY()/2 > tempIntersectionCoord.x)
+                    if(tempTrans->position().y - ((tempColl->getLengthY())/2) < tempIntersectionCoord.y && tempTrans->position().y + tempColl->getLengthY()/2 > tempIntersectionCoord.x)
                     {
-                        if(tempTrans.at(i)->position().z - ((tempColl.at(i)->getLengthZ())/2) < tempIntersectionCoord.z && tempTrans.at(i)->position().z + tempColl.at(i)->getLengthZ()/2 > tempIntersectionCoord.z)
+                        if(tempTrans->position().z - ((tempColl->getLengthZ())/2) < tempIntersectionCoord.z && tempTrans->position().z + tempColl->getLengthZ()/2 > tempIntersectionCoord.z)
                         {
                             intersectionPoint = tempIntersectionCoord;
-                          std::cout << "IntersectionPoint: " << intersectionPoint << " Entity: " << i << std::endl;
+                        //  std::cout << "IntersectionPoint: " << intersectionPoint << " Entity: " << i << std::endl;
                             return i;
                         }
                     }
                 }   //Hvis ikke bruk meshens minste og største verdi. Må finne en bedre løsning
-                else if(tempMeshes.at(i) != nullptr)
+                else if(tempMesh != nullptr)
                 {
 
-                    if(tempTrans.at(i)->position().x+tempMeshes.at(i)->getSmallestBiggestXYZ().at(0) < tempIntersectionCoord.x && tempTrans.at(i)->position().x+tempMeshes.at(i)->getSmallestBiggestXYZ().at(1) > tempIntersectionCoord.x)
+                    if(tempTrans->position().x+tempMesh->getSmallestBiggestXYZ().at(0) < tempIntersectionCoord.x && tempTrans->position().x+tempMesh->getSmallestBiggestXYZ().at(1) > tempIntersectionCoord.x)
                     {
-                        if(tempTrans.at(i)->position().y+tempMeshes.at(i)->getSmallestBiggestXYZ().at(2) < tempIntersectionCoord.y && tempTrans.at(i)->position().y+tempMeshes.at(i)->getSmallestBiggestXYZ().at(3) > tempIntersectionCoord.y)
+                        if(tempTrans->position().y+tempMesh->getSmallestBiggestXYZ().at(2) < tempIntersectionCoord.y &&tempTrans->position().y+tempMesh->getSmallestBiggestXYZ().at(3) > tempIntersectionCoord.y)
                         {
-                            if(tempTrans.at(i)->position().z+tempMeshes.at(i)->getSmallestBiggestXYZ().at(4) < tempIntersectionCoord.z && tempTrans.at(i)->position().z+tempMeshes.at(i)->getSmallestBiggestXYZ().at(5) > tempIntersectionCoord.z)
+                            if(tempTrans->position().z+tempMesh->getSmallestBiggestXYZ().at(4) < tempIntersectionCoord.z && tempTrans->position().z+tempMesh->getSmallestBiggestXYZ().at(5) > tempIntersectionCoord.z)
                             {
                                 intersectionPoint = tempIntersectionCoord;
                                    //std::cout << "IntersectionPoint: " << intersectionPoint << " Entity: " << i << " Position: " << tempTrans.at(i)->position()<<std::endl;

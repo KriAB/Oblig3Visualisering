@@ -42,10 +42,15 @@ public:
     float getLengthX();
     float getLengthY();
     float getLengthZ();
+    std::vector<gsl::Vector3D> neighbours() const;
+    void setNeighbours(std::vector<gsl::Vector3D> nb);
+    float radiusY();
+
 protected:
 
     std::vector<Vertex> mVertices;   //This is usually not needed after object is made
     std::vector<GLuint> mIndices;    //This is usually not needed after object is made
+    std::vector<gsl::Vector3D> mNeighbours;
 
     std::array <float,6> smallestBiggestXYZ;
 
