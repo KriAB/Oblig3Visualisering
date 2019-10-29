@@ -499,6 +499,11 @@ void RenderWindow::setupTextureShader(int shaderIndex)
     mTextureUniform = glGetUniformLocation(mShaderProgram[shaderIndex]->getProgram(), "textureSampler");
 }
 
+Input &RenderWindow::getInput()
+{
+    return mInput;
+}
+
 //This function is called from Qt when window is exposed (shown)
 //and when it is resized
 //exposeEvent is a overridden function from QWindow that we inherit from

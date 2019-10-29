@@ -19,6 +19,7 @@
 #include "entitywidget.h"
 #include "systemmanager.h"
 #include "componentsystem.h"
+#include "input.h"
 
 MainWindow::MainWindow(QWidget *parent) :
     QMainWindow(parent), ui(new Ui::MainWindow)
@@ -29,7 +30,7 @@ MainWindow::MainWindow(QWidget *parent) :
     init();
     setPreMadeEntitiesComboBox();
 
-transUi = new Ui::TransForm;
+    transUi = new Ui::TransForm;
 
 
 
@@ -140,7 +141,7 @@ void MainWindow::setPreMadeEntitiesComboBox()
 void MainWindow::addObjectToPreMadeEntitiesComboBox(QString name)
 {
 
-     ui->PreMadeEntitiesComboBox->addItem(name);
+    ui->PreMadeEntitiesComboBox->addItem(name);
 }
 
 int MainWindow::getSelectedEntity() const
@@ -207,9 +208,9 @@ void MainWindow::on_actionAdd_Object_From_File_triggered()
     {
         shortenFileName = temp.substr(idx+1);
     }
-//    loadedObjects.push_back(shortenFileName);
-//    ui->worldContentList->addItem(QString::fromStdString(shortenFileName));
-//    objectsInWindow.push_back(shortenFileName);
+    //    loadedObjects.push_back(shortenFileName);
+    //    ui->worldContentList->addItem(QString::fromStdString(shortenFileName));
+    //    objectsInWindow.push_back(shortenFileName);
 
     objectToBeAdded = shortenFileName;
     isAddingObject = true;
@@ -222,9 +223,9 @@ void MainWindow::on_actionAdd_Object_From_File_triggered()
 
 void MainWindow::loadStartContent()
 {
-//    objectsInWindow = mRenderWindow->returnCurrentObjectNames();
-//    for(auto obj : objectsInWindow)
-//        ui->worldContentList->addItem(QString::fromStdString(obj));
+    //    objectsInWindow = mRenderWindow->returnCurrentObjectNames();
+    //    for(auto obj : objectsInWindow)
+    //        ui->worldContentList->addItem(QString::fromStdString(obj));
 
 
     // ui->treeWidgetWorldContent->addTopLevelItem(objects);
@@ -259,41 +260,41 @@ void MainWindow::setScrollArea(unsigned int EID)
     //std::cout  << " Eid: " << EID <<std::endl;
 
     //OLD
-//    transTemp = mRenderWindow->getTransComponent(EID);
- //   meshTemp = mRenderWindow->getMeshComponent(EID);
+    //    transTemp = mRenderWindow->getTransComponent(EID);
+    //   meshTemp = mRenderWindow->getMeshComponent(EID);
 
     transTemp = mRenderWindow->getSystemManager()->componentSystem()->getTransCompWithEId(EID);
     meshTemp = mRenderWindow->getSystemManager()->componentSystem()->getMeshCompWithEId(EID);
 
-//Remove entity vil ødelegge EID greiene. Med mindre man lagrer dem i en array og oppdaterer den når de fjernes.
+    //Remove entity vil ødelegge EID greiene. Med mindre man lagrer dem i en array og oppdaterer den når de fjernes.
 
     //adde en widget som kun sier hvilke Entity det er
-int num = static_cast<int> (EID);
-std::string entityText = "Entity " + std::to_string(num);
+    int num = static_cast<int> (EID);
+    std::string entityText = "Entity " + std::to_string(num);
     if(transTemp != nullptr)
     {
-//        std::cout << "Trans: " << transTemp->position() << std::endl;
-//        entityWidget = new QWidget();
-//        Ui::entityForm entityForm;
-//        entityForm.setupUi(entityWidget);
-//        entityForm.label->clear();
-//        entityForm.label->setText(QString::fromStdString(entityText)); //Fungerer ikke fra unsigned int?
+        //        std::cout << "Trans: " << transTemp->position() << std::endl;
+        //        entityWidget = new QWidget();
+        //        Ui::entityForm entityForm;
+        //        entityForm.setupUi(entityWidget);
+        //        entityForm.label->clear();
+        //        entityForm.label->setText(QString::fromStdString(entityText)); //Fungerer ikke fra unsigned int?
 
         selectedEntity = static_cast<int>(EID);
 
-      //  std::cout << "Trans: " << transTemp->position() << std::endl;
+        //  std::cout << "Trans: " << transTemp->position() << std::endl;
         entityWidget = new EntityWidget(this, nullptr,EID);
         entityWidget->setLabel(QString::fromStdString(entityText));
 
         //old =   mRenderWindow->getEntity(EID);
-      Entity* tempEI = mRenderWindow->getSystemManager()->componentSystem()->getEntityWithEId(EID);
-       std::vector<Entity*> children = tempEI->getChildren();
+        Entity* tempEI = mRenderWindow->getSystemManager()->componentSystem()->getEntityWithEId(EID);
+        std::vector<Entity*> children = tempEI->getChildren();
 
-       for(unsigned int i = 0; i < children.size(); i++)
-       {
-           entityText = "Entity " + std::to_string(children.at(i)->eID);
-           entityWidget->addCurrentChild(QString::fromStdString(entityText));
-       }
+        for(unsigned int i = 0; i < children.size(); i++)
+        {
+            entityText = "Entity " + std::to_string(children.at(i)->eID);
+            entityWidget->addCurrentChild(QString::fromStdString(entityText));
+        }
         ui->scrollAreaWidgetContents->layout()->addWidget(entityWidget);
 
 
@@ -318,7 +319,7 @@ std::string entityText = "Entity " + std::to_string(num);
 
     if(meshTemp != nullptr)
     {
-      //  std::cout << "Mesh: " << meshTemp->name << std::endl;
+        //  std::cout << "Mesh: " << meshTemp->name << std::endl;
         meshWidget = new QWidget();
         Ui::MeshForm meshUi;
         meshUi.setupUi(meshWidget);
@@ -377,6 +378,7 @@ void MainWindow::removeEntity(int EID)
 
 void MainWindow::updateValues()
 {
+    gsl::Vector3D changePos;
 
     if(meshTemp != nullptr)
     {
@@ -394,8 +396,45 @@ void MainWindow::updateValues()
 
         else
         {
-            gsl::Vector3D changePos{static_cast<float>(transUi->xTransSpinBox->value()),static_cast<float>(transUi->yTransSpinBox->value()),static_cast<float>(transUi->zTransSpinBox->value())};
+        //Piltastene kan nå endre på possisjon i xz
+            double speed{0.01};
+            if(mRenderWindow->getInput().UP == true)
+            {
+                  changePos = gsl::Vector3D{static_cast<float>(transUi->xTransSpinBox->value()),
+                                            static_cast<float>(transUi->yTransSpinBox->value()),
+                                            static_cast<float>(transUi->zTransSpinBox->value()-speed)};
 
+                  transUi->zTransSpinBox->setValue(static_cast<double>(transTemp->position().z));
+            }
+            else if(mRenderWindow->getInput().DOWN == true)
+
+            {
+                changePos = gsl::Vector3D{static_cast<float>(transUi->xTransSpinBox->value()),
+                                          static_cast<float>(transUi->yTransSpinBox->value()),
+                                          static_cast<float>(transUi->zTransSpinBox->value()+speed)};
+
+                transUi->zTransSpinBox->setValue(static_cast<double>(transTemp->position().z));
+            }
+            else if(mRenderWindow->getInput().LEFT == true)
+            {
+                changePos = gsl::Vector3D{static_cast<float>(transUi->xTransSpinBox->value()-speed),
+                                          static_cast<float>(transUi->yTransSpinBox->value()),
+                                          static_cast<float>(transUi->zTransSpinBox->value())};
+                    transUi->xTransSpinBox->setValue(static_cast<double>(transTemp->position().x));
+            }
+            else if(mRenderWindow->getInput().RIGHT == true)
+            {
+                changePos = gsl::Vector3D{static_cast<float>(transUi->xTransSpinBox->value()+speed),
+                                          static_cast<float>(transUi->yTransSpinBox->value()),
+                                          static_cast<float>(transUi->zTransSpinBox->value())};
+                transUi->xTransSpinBox->setValue(static_cast<double>(transTemp->position().x));
+
+            }
+            else
+            {//Putte inn her om man bruker pilen for å flytte objektet
+                changePos = gsl::Vector3D{static_cast<float>(transUi->xTransSpinBox->value()),static_cast<float>(transUi->yTransSpinBox->value()),static_cast<float>(transUi->zTransSpinBox->value())};
+
+        }
             //må fikse så child flytter seg også
             transTemp->matrix().setPosition(changePos.x,changePos.y,changePos.z);
         }
@@ -410,8 +449,8 @@ void MainWindow::addEntityInWorldContentList(int EID)
     {
         if(temp == EID)
         {
-        std::cout << "Item already in the list" << std::endl;
-        isThere = true;
+            std::cout << "Item already in the list" << std::endl;
+            isThere = true;
         }
     }
     if(isThere == false)
@@ -472,7 +511,7 @@ void MainWindow::on_treeWidgetWorldContent_itemClicked(QTreeWidgetItem *item, in
 
 
     setScrollArea(ui->treeWidgetWorldContent->indexOfTopLevelItem(item));
- //Må adde så det collision box er synlig når objektene velges her også
+    //Må adde så det collision box er synlig når objektene velges her også
 
 }
 
@@ -501,14 +540,14 @@ void MainWindow::on_addEntityButton_clicked()
     mRenderWindow->getSystemManager()->componentSystem()->addEntity(entityObjectName.toStdString(), entityMaterialName.toStdString(),entityCollisionName.toStdString());
 
 
-//    if(entityObjectName == "Empty")
-//    {
-//        //Add empty entity to world
-//    }
-//    else
-//    {
-//        //add object by name eks. "Cube"...
-//    }
+    //    if(entityObjectName == "Empty")
+    //    {
+    //        //Add empty entity to world
+    //    }
+    //    else
+    //    {
+    //        //add object by name eks. "Cube"...
+    //    }
 
 }
 
@@ -526,9 +565,9 @@ void MainWindow::on_actionAdd_From_File_triggered()
     {
         shortenFileName = temp.substr(idx+1);
     }
-//    loadedObjects.push_back(shortenFileName);
-//    ui->worldContentList->addItem(QString::fromStdString(shortenFileName));
-//    objectsInWindow.push_back(shortenFileName);
+    //    loadedObjects.push_back(shortenFileName);
+    //    ui->worldContentList->addItem(QString::fromStdString(shortenFileName));
+    //    objectsInWindow.push_back(shortenFileName);
 
     objectToBeAdded = shortenFileName;
     isAddingObject = true;

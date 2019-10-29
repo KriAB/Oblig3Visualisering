@@ -68,6 +68,8 @@ public:
        QSize getWindowSize();
        SystemManager *getSystemManager() const;
 
+       Input &getInput();
+
 private slots:
        void render();
 
