@@ -82,7 +82,7 @@ void ComponentSystem::makeScene()
 
     //Item 1 i forhold til b-spline
     addEntity("Cube", "Default", "OBB", gsl::Vector3D{2,2,2});
-    updateHeightAndBarycentricCheck(1);
+    updateHeightAndBarycentricCheck(1); // setter høyden riktig i forhold til planet, så den ikke svever.
     //mResourceFactory->addChild(0,1);
 
 
@@ -273,7 +273,7 @@ void ComponentSystem::initGravity(int EID)
 
 }
 
-
+//Her oppdaterer man høyden til objektet i forhold til planet som har initGravity.
 void ComponentSystem::updateHeightAndBarycentricCheck(int EIDTarget)
 {
 

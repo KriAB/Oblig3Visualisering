@@ -1091,8 +1091,29 @@ void ResourceFactory::readTxtFile(std::string filename) {
         qDebug() << "TriangleSurface file read: " << QString::fromStdString(filename);
     }
     else
-    {
+    {   //Hvis filen ikke er i Assets/Meshes/, så sjekk VisAssets/
         qDebug() << "Could not open file for reading: " << QString::fromStdString(filename);
+        inn.close();
+
+        fileWithPath = gsl::projectFolderName + "VisAssets/" + filename;
+        inn.open(fileWithPath);
+
+        if (inn.is_open()) {
+            int n;
+            Vertex vertex;
+            inn >> n;
+            mVertices.reserve(n);
+            for (int i=0; i<n; i++) {
+                inn >> vertex;
+                mVertices.push_back(vertex);
+            }
+            inn.close();
+            qDebug() << "TriangleSurface file read: " << QString::fromStdString(filename);
+        }
+        else
+        {
+            qDebug() << "Could not open file for reading: " << QString::fromStdString(filename);
+        }
     }
 }
 
