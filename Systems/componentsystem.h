@@ -1,0 +1,87 @@
+#ifndef COMPONENTSYSTEM_H
+#define COMPONENTSYSTEM_H
+#include "materialcomponent.h"
+#include "meshcomponent.h"
+#include "rendercomponent.h"
+#include "transformcomponent.h"
+#include "collisioncomponent.h"
+#include "soundcomponent.h"
+#include "inputcomponent.h"
+#include "Entity.h"
+
+#include <QOpenGLFunctions_4_1_Core>
+
+class ResourceFactory;
+class Scene;
+class RenderWindow;
+class MainWindow;
+class Shader;
+
+class ComponentSystem : public QOpenGLFunctions_4_1_Core
+{
+public:
+    ComponentSystem(RenderWindow *renderwindow, MainWindow *mainWindow, Shader *shaderProgram); //We can hold 4 shaders);
+    ~ComponentSystem();
+    // arrays til MeshComponent
+    //arrays til MaterialComponent
+    //GameObject *mGameObject;
+
+    //mGameObject->addComponent(mMeshComponent);
+    //sjekker om objectet har childs/siblings, Må gi objektene lik traslasjon osv.
+
+    void sortByEID();
+//    void init();
+//   void update();
+
+    void saveScene(std::string name);
+    void loadScene(std::string name);
+    void makeScene();
+
+
+    Entity *getEntityWithEId(int EID);
+
+    TransformComponent *getTransCompWithEId(int EID);
+    MeshComponent *getMeshCompWithEId(int EID);
+    CollisionComponent *getCollCompWithEId(int EID);
+    MaterialComponent *getMatCompWithEId(int EID);
+    SoundComponent *getSoundCompWithEId(int EID);
+    InputComponent *getInputCompWithEId(int EID);
+    RenderComponent *getRenderCompWithEId(int EID);
+
+
+
+    void addTransComp(TransformComponent *transComp);
+    void addMeshComp(MeshComponent *meshComp);//...
+    void addEmptyEntity(Entity *entity);
+    void addEntity(std::string filename, std::string material, std::string collision);
+
+    std::vector<Entity *> getEntities() const;
+    std::vector<MeshComponent *> getMeshComponents() const;
+    std::vector<MaterialComponent *> getMaterialComponents() const;
+    std::vector<TransformComponent *> getTransformComponents() const;
+    std::vector<CollisionComponent *> getCollisionComponents() const;
+    std::vector<SoundComponent *> getSoundComponent() const;
+    std::vector<InputComponent *> getInputComponent() const;
+    std::vector<RenderComponent *> getRenderComponents() const;
+private:
+    std::vector <MeshComponent*> mMeshComponents; //sortere på Entity ID //til renderSystem
+    std::vector <MaterialComponent*> mMaterialComponents; //til renderSystem
+    std::vector <RenderComponent*> mRenderComponents;
+    std::vector <TransformComponent*> mTransformComponents;
+    std::vector <CollisionComponent*> mCollisionComponents;
+    std::vector <SoundComponent*> mSoundComponent;
+    std::vector <InputComponent*> mInputComponent;
+
+    std::vector <Entity*> mEntities; //conteiner med alle objektene. Kan eks. brukes i gui for å se og velge objekter.
+
+    ResourceFactory *mResourceFactory{nullptr};
+    RenderWindow *mRenderWindow{nullptr};
+    MainWindow *mMainWindow{nullptr};
+    Shader *mShaderProgram[4]{nullptr};
+
+    int numEntity{0};
+
+    Scene *mScene{nullptr};
+};
+
+#endif // COMPONENTSYSTEM_H
