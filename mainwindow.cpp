@@ -397,7 +397,7 @@ void MainWindow::updateValues()
         else
         {
         //Piltastene kan nå endre på possisjon i xz
-            double speed{0.01};
+            double speed{0.02};
             if(mRenderWindow->getInput().UP == true)
             {
                   changePos = gsl::Vector3D{static_cast<float>(transUi->xTransSpinBox->value()),
