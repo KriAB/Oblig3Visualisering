@@ -188,13 +188,13 @@ void RenderWindow::init()
     //    mVisualObjects.push_back(temp);
     //    mPlayer = temp;
 
-    temp = new SkyBox();
-    temp->init();
-    temp->setShader(mShaderProgram[1]);
-    temp->mMaterial.setTextureUnit(2);
-    temp->mMatrix.scale(15.f,15.f,15.f);
-    temp->mName = "Skybox";
-    mVisualObjects.push_back(temp);
+//    temp = new SkyBox();
+//    temp->init();
+//    temp->setShader(mShaderProgram[1]);
+//    temp->mMaterial.setTextureUnit(2);
+//    temp->mMatrix.scale(15.f,15.f,15.f);
+//    temp->mName = "Skybox";
+//    mVisualObjects.push_back(temp);
 
 //    temp = new BillBoard();
 //    temp->init();
@@ -261,7 +261,7 @@ void RenderWindow::init()
 
     //********************** Set up camera **********************
     mCurrentCamera = new Camera();
-    mCurrentCamera->setPosition(gsl::Vector3D(1.f, 1.f, 4.4f));
+    mCurrentCamera->setPosition(gsl::Vector3D(4.f, 5.f, 15.f));
     //    mCurrentCamera->yaw(45.f);
     //    mCurrentCamera->pitch(5.f);
 

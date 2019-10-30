@@ -32,8 +32,6 @@ MainWindow::MainWindow(QWidget *parent) :
 
     transUi = new Ui::TransForm;
 
-
-
 }
 
 MainWindow::~MainWindow()
