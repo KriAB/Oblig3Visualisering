@@ -94,6 +94,12 @@ private:
     //For Barycentric:
     Gravity *mGravity = nullptr;
     std::vector<gsl::Vector3D> neighbours;
+
+
+
+    //For Oblig 3
+    void initNPC(int EID, std::vector<Entity *> items);
+    void updateNPC(int EID);
 };
 
 #endif // COMPONENTSYSTEM_H

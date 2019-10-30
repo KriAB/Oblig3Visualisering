@@ -272,7 +272,6 @@ void ComponentSystem::initGravity(int EID)
     }
 
 }
-
 //Her oppdaterer man høyden til objektet i forhold til planet som har initGravity.
 void ComponentSystem::updateHeightAndBarycentricCheck(int EIDTarget)
 {
@@ -285,6 +284,17 @@ void ComponentSystem::updateHeightAndBarycentricCheck(int EIDTarget)
         getTransCompWithEId(EIDTarget)->matrix().setHeightY(heigth+getMeshCompWithEId(EIDTarget)->radiusY());
 
     }
+
+}
+void ComponentSystem::initNPC(int EID, std::vector<Entity*> items)
+{
+    //initialiserer NPC på en valgt Entity, sender en vector med entites som skal være items
+}
+
+void ComponentSystem::updateNPC(int EID)
+{
+    // oppdaterer NPCen slik at den kjører state maskinen
+    //Her må man kjøre en move, som
 
 }
 

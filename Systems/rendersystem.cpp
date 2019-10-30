@@ -12,7 +12,11 @@ void RenderSystem::update()
     {
         for(auto renderComp : mComponentSystem->getRenderComponents())
         {
-            renderComp->draw();
+            if(renderComp->isRendering)
+            {
+                   renderComp->draw();
+            }
+
         }
     }
 }

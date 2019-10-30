@@ -19,6 +19,8 @@ public:
     void drawIndicesLines();
     void drawArrayLineLoop();
     void drawIndicesLineLoop();
+
+    bool isRendering{true};
 private:
     MaterialComponent *matComp{nullptr};
     MeshComponent *meshComp{nullptr};
