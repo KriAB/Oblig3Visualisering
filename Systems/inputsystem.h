@@ -1,5 +1,6 @@
 #ifndef INPUTSYSTEM_H
 #define INPUTSYSTEM_H
+#include <QWindow>
 #include <QMouseEvent>
 #include <QWheelEvent>
 #include <QKeyEvent>
@@ -12,7 +13,7 @@ class Entity;
 class Camera;
 class ComponentSystem;
 
-class InputSystem
+class InputSystem : public QWindow
 {
 public:
     InputSystem(ComponentSystem *compSyst);

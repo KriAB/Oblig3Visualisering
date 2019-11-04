@@ -129,8 +129,8 @@ MeshComponent* ResourceFactory::makeResource(std::string fileName)
         }
         if(fileName == "Ball")
         {
-            OctahedronBall *ball;
             ball = new OctahedronBall(2);
+
             mIndices =  ball->returnIndices();
             mVertices = ball->returnVertices();
             setMeshComponent();
@@ -515,9 +515,11 @@ std::vector<Vertex> ResourceFactory::collisionShape(std::string type)
 
         else
             radius =(lenghtZ/2);
+     //Lage vertices for sphere
+        ball = new OctahedronBall(1);
+        temp = ball->returnVertices();
 
-        //Lage vertices for sphere
-       temp = makeBS(radius);
+      // temp = makeBS(radius);
     }    if(type == "AABB")
     {
         collComp->shape = CollisionShape::AABB;
@@ -752,6 +754,8 @@ ResourceFactory::~ResourceFactory()
     glDeleteBuffers( 1, &mVBO );
 
 
+    delete ball;
+    ball = nullptr;
     delete meshComp;
     meshComp = nullptr;
 

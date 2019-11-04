@@ -35,6 +35,13 @@ private:
     RenderWindow *mRenderWindow{nullptr};
     Shader *mShaderProgram[4]{nullptr};
 
+    void checkPlayerInput();
+
+
+    int player{-1};
+
+    //To limit the calculation, so that it does not lag.
+    int intervalCalculationHeight{0};
 };
 
 #endif // SYSTEMMANAGER_H

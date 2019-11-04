@@ -28,6 +28,7 @@ class MaterialComponent;
 class SoundComponent;
 class CollisionComponent;
 class Gravity;
+class OctahedronBall;
 
 class ResourceFactory : public QOpenGLFunctions_4_1_Core
 {
@@ -181,6 +182,7 @@ private:
     gsl::Vector3D mPosition;    ///< Vector containing source position.
     gsl::Vector3D mVelocity;    ///< Vector containing source velocity.
     bool checkError(std::string name);
+    OctahedronBall *ball;
 };
 
 #endif // RESOURCEFACTORY_H

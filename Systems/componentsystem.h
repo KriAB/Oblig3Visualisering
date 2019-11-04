@@ -37,6 +37,7 @@ public:
     void saveScene(std::string name);
     void loadScene(std::string name);
     void makeScene();
+    void move(int EID, gsl::Vector3D translate);
 
 
     Entity *getEntityWithEId(int EID);
