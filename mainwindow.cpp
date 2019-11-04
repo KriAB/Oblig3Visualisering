@@ -386,45 +386,47 @@ void MainWindow::updateValues()
     {
         if(isPlaying == true)
         {
-            //Trengs hvis objektet beveger seg av seg selv
-            transUi->xTransSpinBox->setValue(static_cast<double>(transTemp->position().x));
-            transUi->yTransSpinBox->setValue(static_cast<double>(transTemp->position().y));
-            transUi->zTransSpinBox->setValue(static_cast<double>(transTemp->position().z));
+
+                //Trengs hvis objektet beveger seg av seg selv
+                transUi->xTransSpinBox->setValue(static_cast<double>(transTemp->position().x));
+                transUi->yTransSpinBox->setValue(static_cast<double>(transTemp->position().y));
+                transUi->zTransSpinBox->setValue(static_cast<double>(transTemp->position().z));
+
         }
 
         else
         {
-        //Piltastene kan nå endre på possisjon i xz
+            //Piltastene kan nå endre på possisjon i xz
             double speed{0.02};
             if(mRenderWindow->getInput().UP == true)
             {
-                  changePos = gsl::Vector3D{static_cast<float>(transUi->xTransSpinBox->value()),
-                                            static_cast<float>(transUi->yTransSpinBox->value()),
-                                            static_cast<float>(transUi->zTransSpinBox->value()-speed)};
+                changePos = gsl::Vector3D{static_cast<float>(transUi->xTransSpinBox->value()),
+                        static_cast<float>(transUi->yTransSpinBox->value()),
+                        static_cast<float>(transUi->zTransSpinBox->value()-speed)};
 
-                  transUi->zTransSpinBox->setValue(static_cast<double>(transTemp->position().z));
+                transUi->zTransSpinBox->setValue(static_cast<double>(transTemp->position().z));
             }
             else if(mRenderWindow->getInput().DOWN == true)
 
             {
                 changePos = gsl::Vector3D{static_cast<float>(transUi->xTransSpinBox->value()),
-                                          static_cast<float>(transUi->yTransSpinBox->value()),
-                                          static_cast<float>(transUi->zTransSpinBox->value()+speed)};
+                        static_cast<float>(transUi->yTransSpinBox->value()),
+                        static_cast<float>(transUi->zTransSpinBox->value()+speed)};
 
                 transUi->zTransSpinBox->setValue(static_cast<double>(transTemp->position().z));
             }
             else if(mRenderWindow->getInput().LEFT == true)
             {
                 changePos = gsl::Vector3D{static_cast<float>(transUi->xTransSpinBox->value()-speed),
-                                          static_cast<float>(transUi->yTransSpinBox->value()),
-                                          static_cast<float>(transUi->zTransSpinBox->value())};
-                    transUi->xTransSpinBox->setValue(static_cast<double>(transTemp->position().x));
+                        static_cast<float>(transUi->yTransSpinBox->value()),
+                        static_cast<float>(transUi->zTransSpinBox->value())};
+                transUi->xTransSpinBox->setValue(static_cast<double>(transTemp->position().x));
             }
             else if(mRenderWindow->getInput().RIGHT == true)
             {
                 changePos = gsl::Vector3D{static_cast<float>(transUi->xTransSpinBox->value()+speed),
-                                          static_cast<float>(transUi->yTransSpinBox->value()),
-                                          static_cast<float>(transUi->zTransSpinBox->value())};
+                        static_cast<float>(transUi->yTransSpinBox->value()),
+                        static_cast<float>(transUi->zTransSpinBox->value())};
                 transUi->xTransSpinBox->setValue(static_cast<double>(transTemp->position().x));
 
             }
@@ -432,7 +434,7 @@ void MainWindow::updateValues()
             {//Putte inn her om man bruker pilen for å flytte objektet
                 changePos = gsl::Vector3D{static_cast<float>(transUi->xTransSpinBox->value()),static_cast<float>(transUi->yTransSpinBox->value()),static_cast<float>(transUi->zTransSpinBox->value())};
 
-        }
+            }
             //må fikse så child flytter seg også
             transTemp->matrix().setPosition(changePos.x,changePos.y,changePos.z);
         }

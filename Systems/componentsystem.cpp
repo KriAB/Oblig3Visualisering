@@ -85,7 +85,6 @@ void ComponentSystem::makeScene()
     updateHeightAndBarycentricCheck(1); // setter høyden riktig i forhold til planet, så den ikke svever.
     //mResourceFactory->addChild(0,1);
 
-
     //Item 2 i forhold til b-spline
     addEntity("Cube", "Default", "OBB", gsl::Vector3D{20,2,26});
     updateHeightAndBarycentricCheck(2);
@@ -94,6 +93,27 @@ void ComponentSystem::makeScene()
     addEntity("Cube", "Default", "OBB", gsl::Vector3D{4,2,26});
     updateHeightAndBarycentricCheck(3);
 
+    //Item 4 i forhold til b-spline
+    addEntity("Cube", "Default", "OBB", gsl::Vector3D{20,2,4});
+    updateHeightAndBarycentricCheck(4);
+
+    //Player
+    addEntity("Ball", "Default", "BS", gsl::Vector3D{4,2,8});
+    updateHeightAndBarycentricCheck(5);
+    mInputComponent.push_back(new InputComponent(5,InputMovementTypes::MOVE_UP, InputMovementTypes::MOVE_DOWN, InputMovementTypes::MOVE_LEFT,InputMovementTypes::MOVE_RIGHT, InputFireTypes::NO_FIRE));
+}
+
+void ComponentSystem::move(int EID, gsl::Vector3D translate)
+{
+   TransformComponent* trans = getTransCompWithEId(EID);
+   if(trans != nullptr)
+   {
+       trans->translate(translate);
+   }
+   else
+   {
+       std::cout << "No TransformComponent with Eid: " << EID << std::endl;
+   }
 }
 
 
@@ -163,6 +183,18 @@ MaterialComponent *ComponentSystem::getMatCompWithEId(int EID)
 SoundComponent *ComponentSystem::getSoundCompWithEId(int EID)
 {
     for(auto temp : mSoundComponent)
+    {
+        if(static_cast<int>(temp->eID) == EID)
+        {
+            return temp;
+        }
+    }
+    return nullptr;
+}
+
+InputComponent *ComponentSystem::getInputCompWithEId(int EID)
+{
+    for(auto temp : mInputComponent)
     {
         if(static_cast<int>(temp->eID) == EID)
         {
@@ -280,7 +312,7 @@ void ComponentSystem::updateHeightAndBarycentricCheck(int EIDTarget)
     {
         float heigth = mGravity->getHeight();
 
-        std::cout << "Cube " <<EIDTarget << " height: " << getTransCompWithEId(EIDTarget)->matrix().getPosition().y << "Calculated height: " << heigth << std::endl;
+    //    std::cout << "Cube " <<EIDTarget << " height: " << getTransCompWithEId(EIDTarget)->matrix().getPosition().y << "Calculated height: " << heigth << std::endl;
         getTransCompWithEId(EIDTarget)->matrix().setHeightY(heigth+getMeshCompWithEId(EIDTarget)->radiusY());
 
     }

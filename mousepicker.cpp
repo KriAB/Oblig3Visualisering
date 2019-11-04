@@ -99,8 +99,6 @@ gsl::Vector3D MousePicker::getPointOnRay(gsl::Vector3D ray, float distance)
 
 int MousePicker::intersectedEntity()
 {
-
-
     ComponentSystem *compS = mSystemManager->componentSystem();
 
     gsl::Vector3D tempIntersectionCoord = currentRay;

@@ -80,7 +80,7 @@ void Gravity::checkBarycentricCoordinates(gsl::Vector3D mTargetCoordinates)
                         //Hvis u/p2p3 er minst
                         if((u <= v) &&  (u <= w))
                         {
-                            std::cout << " inside u" << std::endl;
+                           // std::cout << " inside u" << std::endl;
                             if(static_cast<int>(n0.x) >= 0)
                             {
                                 nTriangle = n0.x;
@@ -103,7 +103,7 @@ void Gravity::checkBarycentricCoordinates(gsl::Vector3D mTargetCoordinates)
                         //Hvis v/p1p3 er minst
                         else if((v <= u) &&  (v <= w))
                         {
-                            std::cout << " inside v" << std::endl;
+                            //std::cout << " inside v" << std::endl;
                             if(n0.y >= 0)
                             {
                                 nTriangle = n0.y;
@@ -126,7 +126,7 @@ void Gravity::checkBarycentricCoordinates(gsl::Vector3D mTargetCoordinates)
                         //Hvis w/p1p2 er minst
                         else if((w <= u) && (w <= v))
                         {
-                            std::cout << " inside w" << std::endl;
+                           // std::cout << " inside w" << std::endl;
                             if(n0.z >= 0)
                             {
                                 nTriangle = n0.z;
@@ -150,7 +150,7 @@ void Gravity::checkBarycentricCoordinates(gsl::Vector3D mTargetCoordinates)
                     else
                     {
                         //Ikke innenfor noen
-                        std::cout << "Not whitin!" << std::endl;
+                        //std::cout << "Not whitin!" << std::endl;
                         isOnTriangle = false;
                         numOfRounds = 0;
                         break;
@@ -168,21 +168,21 @@ void Gravity::checkBarycentricCoordinates(gsl::Vector3D mTargetCoordinates)
 
                 }
 
-                std::cout << std::endl
-                          << "Triangle Nr: " << nTriangle
-                          << " Barycentric Coordinates: u: " << barCenCoor.x << " v: " << barCenCoor.y << " w: " <<barCenCoor.z << std::endl
-                          << " Neighbors at x: " << neighbours.at(nTriangle).x << " y: " << neighbours.at(nTriangle).y << " z: " << neighbours.at(nTriangle).z << std::endl
-                          << " v1 x: " <<trianglePoints.at(nTriangle*3).x
-                          << " v1 y: " <<trianglePoints.at(nTriangle*3).y
-                          << " v1 z: " <<trianglePoints.at(nTriangle*3).z
-                          << "   v2 x: " <<trianglePoints.at(nTriangle*3+1).x
-                          << " v2 y: " <<trianglePoints.at(nTriangle*3+1).y
-                          << " v2 z: " <<trianglePoints.at(nTriangle*3+1).z
-                          << "   v3 x: " <<trianglePoints.at(nTriangle*3+2).x
-                          << " v3 y: " <<trianglePoints.at(nTriangle*3+2).y
-                          << " v3 z: " <<trianglePoints.at(nTriangle*3+2).z
-                          << "  Target: x:"<< mTargetCoordinates.x << " y: " << mTargetCoordinates.y << " Z: " << mTargetCoordinates.z
-                          <<std::endl;
+//                std::cout << std::endl
+//                          << "Triangle Nr: " << nTriangle
+//                          << " Barycentric Coordinates: u: " << barCenCoor.x << " v: " << barCenCoor.y << " w: " <<barCenCoor.z << std::endl
+//                          << " Neighbors at x: " << neighbours.at(nTriangle).x << " y: " << neighbours.at(nTriangle).y << " z: " << neighbours.at(nTriangle).z << std::endl
+//                          << " v1 x: " <<trianglePoints.at(nTriangle*3).x
+//                          << " v1 y: " <<trianglePoints.at(nTriangle*3).y
+//                          << " v1 z: " <<trianglePoints.at(nTriangle*3).z
+//                          << "   v2 x: " <<trianglePoints.at(nTriangle*3+1).x
+//                          << " v2 y: " <<trianglePoints.at(nTriangle*3+1).y
+//                          << " v2 z: " <<trianglePoints.at(nTriangle*3+1).z
+//                          << "   v3 x: " <<trianglePoints.at(nTriangle*3+2).x
+//                          << " v3 y: " <<trianglePoints.at(nTriangle*3+2).y
+//                          << " v3 z: " <<trianglePoints.at(nTriangle*3+2).z
+//                          << "  Target: x:"<< mTargetCoordinates.x << " y: " << mTargetCoordinates.y << " Z: " << mTargetCoordinates.z
+//                          <<std::endl;
             }
         }
 

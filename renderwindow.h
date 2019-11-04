@@ -57,21 +57,21 @@ public:
     MeshComponent* getMeshComponent(unsigned int EID);
     TransformComponent* getTransComponent(unsigned int EID);
     MaterialComponent* getMaterialComponent(unsigned int EID);
-       CollisionComponent* getCollisionComponent(unsigned int EID);
-       std::vector<Entity*> getEntities();
-       Entity *getEntity(unsigned int EID);
+    CollisionComponent* getCollisionComponent(unsigned int EID);
+    std::vector<Entity*> getEntities();
+    Entity *getEntity(unsigned int EID);
 
 
-       int mMouseX{0};
-       int mMouseY{0};
+    float mMouseX{0};
+    float mMouseY{0};
 
-       QSize getWindowSize();
-       SystemManager *getSystemManager() const;
+    QSize getWindowSize();
+    SystemManager *getSystemManager() const;
 
-       Input &getInput();
+    Input &getInput();
 
 private slots:
-       void render();
+    void render();
 
 private:
     void init();
@@ -156,9 +156,9 @@ protected:
     MousePicker *picker;
     int previousPick = -1;
 
-   std::vector<gsl::Vector3D> startPos;
+    std::vector<gsl::Vector3D> startPos;
 
-   SystemManager *mSystemManager;
+    SystemManager *mSystemManager;
 
 };
 
