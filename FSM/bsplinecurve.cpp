@@ -42,7 +42,7 @@ void BSplineCurve::makeKnots()
     //De som er i midten er (1/((antall i midten)+1)))
     //else
     //1.halvdel = 0, 2.halvdel = 1
-
+    t.clear();
     int numberOfKnots = calcNumberOfKnots();
     if(d == 1)
     {
@@ -90,6 +90,13 @@ void BSplineCurve::makeKnots()
         }
     }
 }
+
+gsl::Vector3D BSplineCurve::makePatrolPoint(float x, std::vector<gsl::Vector3D> controlpoints)
+{
+    setKnotsAndControlPoints(controlpoints);
+    return evaluateBSpline(getMy(x), x);
+}
+
 int BSplineCurve::calcNumberOfKnots()
 {
     int numberOfKnots;
@@ -105,6 +112,15 @@ int BSplineCurve::calcNumberOfKnots()
     {
         numberOfKnots = n + d + 1;
     }
+}
+
+int BSplineCurve::getMy(float x)
+{
+    // CALCULATE VALID KNOT INTERVAL 'MY'
+    for (unsigned int my{0}; my < t.size() - 1; ++my)
+        if (t[my] <= x && x < t[my + 1])
+            return static_cast<int>(my);
+    return -1;
 }
 
 gsl::Vector3D BSplineCurve::evaluateBSpline(int my, float x)
@@ -128,7 +144,7 @@ float BSplineCurve::findKnotInterval(float x)
 {
     float numberInMiddle;
     if(d==2)
-    numberInMiddle = b.size() - 6;
+        numberInMiddle = b.size() - 6;
 
     if(d==1)
         numberInMiddle = b.size() - 4;

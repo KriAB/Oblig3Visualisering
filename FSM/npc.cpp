@@ -74,6 +74,7 @@ void NPC::setControlPoint()
 void NPC::patrol()
 {
 
+
     //Vite om Kontrollpunkt, Endepunkt
     //if nådd endepunkt
     // notify(0)
@@ -85,6 +86,8 @@ void NPC::patrol()
     //notify(2);
     //If hinder i path
     //notify(3)
+
+
 
 }
 
