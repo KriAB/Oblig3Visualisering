@@ -6,12 +6,11 @@ NPC::NPC()
     mBSplineCurve = new BSplineCurve();
 }
 
-NPC::NPC(gsl::Vector3D *EndP, std::vector<gsl::Vector3D> itemP)
+NPC::NPC(std::array<gsl::Vector3D, 2> EndP, std::vector<gsl::Vector3D> itemP)
 {
     mBSplineCurve = new BSplineCurve();
 
-    endPoints[0] = EndP[0];
-    endPoints[1] = EndP[1];
+    endPoints = EndP;
 
     items = itemP;
 }
@@ -48,6 +47,10 @@ NPC::~NPC()
 
 void NPC::setControlPoint()
 {
+   //clean up
+    controllPoints.clear();
+    itemsIndex.clear();
+
     controllPoints.push_back(endPoints[0]);
     for(int i = 0; i < items.size(); i++)
     {
@@ -88,6 +91,13 @@ void NPC::learn()
 
 }
 
+void NPC::updatePoints(std::array<gsl::Vector3D, 2> EndP, std::vector<gsl::Vector3D> itemP)
+{
+    endPoints = EndP;
+    items = itemP;
+    setControlPoint();
+}
+
 void NPC::notify(int notification)
 {
     notification_queue.push(notification);
@@ -97,6 +107,7 @@ void NPC::notify(int notification)
 
 void NPC::build_path()
 {
+
 
     // Bytte rekkefølge på ItemsIndex.
     if(iterator < itemsIndex.size()-1)

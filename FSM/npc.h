@@ -21,7 +21,7 @@ class NPC
 {
 public:
     NPC();
-    NPC(gsl::Vector3D *EndP, std::vector<gsl::Vector3D> itemP);
+    NPC(std::array<gsl::Vector3D,2> EndP, std::vector<gsl::Vector3D> itemP);
     ~NPC();
 
     //Sett kontrollpunkter med items og endepunkter 1.time
@@ -42,6 +42,8 @@ public:
     void init();
     void draw();
 
+    //Updating the points, if ex some is taken by the player etc. Should only be executed if a point is gone. Need to do this in SystemManager.
+    void updatePoints(std::array<gsl::Vector3D, 2> EndP, std::vector<gsl::Vector3D> itemP);
 
     void sortIndex();
 private:
@@ -71,7 +73,7 @@ private:
     //item sine posisjoner = kontrollpunkter(endepunkter)
 
     //Endepunkter
-    gsl::Vector3D endPoints[2];
+  std::array<gsl::Vector3D,2> endPoints;
     //Vector med items to collect
     std::vector<gsl::Vector3D> items;
     std::vector<int> itemsIndex;
