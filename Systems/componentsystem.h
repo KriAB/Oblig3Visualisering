@@ -17,11 +17,12 @@ class RenderWindow;
 class MainWindow;
 class Shader;
 class Gravity;
+class SystemManager;
 
 class ComponentSystem : public QOpenGLFunctions_4_1_Core
 {
 public:
-    ComponentSystem(RenderWindow *renderwindow, MainWindow *mainWindow, Shader *shaderProgram); //We can hold 4 shaders);
+    ComponentSystem(RenderWindow *renderwindow, MainWindow *mainWindow, Shader *shaderProgram, SystemManager *mSystemManager ); //We can hold 4 shaders);
     ~ComponentSystem();
     // arrays til MeshComponent
     //arrays til MaterialComponent
@@ -86,6 +87,7 @@ private:
     RenderWindow *mRenderWindow{nullptr};
     MainWindow *mMainWindow{nullptr};
     Shader *mShaderProgram[4]{nullptr};
+    SystemManager * mSystemManager{nullptr};
 
     int numEntity{0};
 
@@ -101,6 +103,9 @@ private:
     //For Oblig 3
     void initNPC(int EID, std::vector<Entity *> items);
     void updateNPC(int EID);
+
+    //For å lagre items
+    std::vector<TransformComponent*> items;
 };
 
 #endif // COMPONENTSYSTEM_H

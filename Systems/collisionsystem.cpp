@@ -40,6 +40,18 @@ bool CollisionSystem::collisionCheck(int EID, int otherEID)
                     return collisionCheckBS_Bs(thisCol,otherCol,otherTrans,thisTrans);
                 }
             }
+            else
+            {
+                if ((thisCol->shape == CollisionShape::BS) && (otherCol->shape == CollisionShape::OBB))
+                {
+                    return collisionCheckBS_OBB(thisCol, otherCol, otherTrans, thisTrans);
+                }
+
+                if ((thisCol->shape == CollisionShape::OBB) && (otherCol->shape == CollisionShape::BS))
+                {
+                    return collisionCheckBS_OBB(otherCol, thisCol ,thisTrans, otherTrans);
+                }
+            }
 
         }
     }
@@ -67,9 +79,9 @@ bool CollisionSystem::collisionCheckAABB_AABB(CollisionComponent *thisCol, Colli
             || (thisTrans->position().x - otherTrans->position().x < halfOtherX && thisTrans->position().x - otherTrans->position().x > -halfOtherX))
         if((thisTrans->position().y - otherTrans->position().y < halfLengthY && thisTrans->position().y - otherTrans->position().y > -halfLengthY)
                 || (thisTrans->position().y - otherTrans->position().y < halfOtherY && thisTrans->position().y - otherTrans->position().y > -halfOtherY))
-        if((thisTrans->position().z - otherTrans->position().z < halfLengthZ && thisTrans->position().z - otherTrans->position().z > -halfLengthZ)
-                || (thisTrans->position().z - otherTrans->position().z < halfOtherZ && thisTrans->position().z - otherTrans->position().z > -halfOtherZ))
-                    return true;
+            if((thisTrans->position().z - otherTrans->position().z < halfLengthZ && thisTrans->position().z - otherTrans->position().z > -halfLengthZ)
+                    || (thisTrans->position().z - otherTrans->position().z < halfOtherZ && thisTrans->position().z - otherTrans->position().z > -halfOtherZ))
+                return true;
     //No collision
     std::cout << "No collision between: Entity" << thisCol->eID << " and Entity" << otherCol->eID << std::endl;
     return false;
@@ -81,6 +93,33 @@ bool CollisionSystem::collisionCheckOBB_OBB(CollisionComponent *thisCol, Collisi
     return false;
 }
 
+bool CollisionSystem::collisionCheckBS_OBB(CollisionComponent *thisCol, CollisionComponent *otherCol, TransformComponent *otherTrans, TransformComponent *thisTrans)
+{
+    float thisRadius = thisCol->radius();
+
+    float halfOtherX = otherCol->getLengthX()/2;
+    float halfOtherY = otherCol->getLengthY()/2;
+    float halfOtherZ = otherCol->getLengthZ()/2;
+
+
+
+    //TODO: sjekke Scalen til objektene og ta det med
+    float lengthBetVec = thisTrans->position().lengthBetVec3d(otherTrans->position());
+    if(lengthBetVec <= thisRadius )
+        return true;
+    else
+    {
+
+        if((thisTrans->position().x - otherTrans->position().x < halfOtherX && thisTrans->position().x - otherTrans->position().x > -halfOtherX))
+            if((thisTrans->position().y - otherTrans->position().y < halfOtherY && thisTrans->position().y - otherTrans->position().y > -halfOtherY))
+                if((thisTrans->position().z - otherTrans->position().z < halfOtherZ && thisTrans->position().z - otherTrans->position().z > -halfOtherZ))
+                    return true;
+    }
+
+    return false;
+
+}
+
 bool CollisionSystem::collisionCheckBS_Bs(CollisionComponent *thisCol, CollisionComponent *otherCol, TransformComponent *otherTrans, TransformComponent *thisTrans)
 {
     float thisRadius = thisCol->radius();
@@ -89,6 +128,6 @@ bool CollisionSystem::collisionCheckBS_Bs(CollisionComponent *thisCol, Collision
     //TODO: sjekke Scalen til objektene og ta det med
     float lengthBetVec = thisTrans->position().lengthBetVec3d(otherTrans->position());
     if(lengthBetVec <= thisRadius || lengthBetVec <= otherRadius)
-                return true;
+        return true;
     return false;
 }

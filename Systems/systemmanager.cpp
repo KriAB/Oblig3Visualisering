@@ -9,6 +9,7 @@
 #include "renderwindow.h"
 #include "shader.h"
 #include "mainwindow.h"
+#include "FSM/npc.h"
 
 SystemManager::SystemManager(RenderWindow *renderwindow, MainWindow *mainwindow, Shader *shaderProgram): mMainWindow(mainwindow), mRenderWindow(renderwindow),
     mShaderProgram{shaderProgram}
@@ -17,14 +18,20 @@ SystemManager::SystemManager(RenderWindow *renderwindow, MainWindow *mainwindow,
     mShaderProgram[1] = &shaderProgram[1];
     mShaderProgram[2] = &shaderProgram[2];
     mShaderProgram[3] = &shaderProgram[3];
-    mComponentSystem = new ComponentSystem(mRenderWindow, mMainWindow,*mShaderProgram);
+    mComponentSystem = new ComponentSystem(mRenderWindow, mMainWindow,*mShaderProgram, this);
     mCollisionSystem = new CollisionSystem(mComponentSystem);
     mInputSystem = new InputSystem(mComponentSystem);
     mRenderSystem = new RenderSystem(mComponentSystem);
     mTransformSystem = new TransformSystem(mComponentSystem);
 
+
+
     if(mComponentSystem->getInputComponent().at(0)!= nullptr)
         player = mComponentSystem->getInputComponent().at(0)->eID;
+
+
+    setItemsPosition();
+    mNPC = new NPC(endPts ,itemsPosition);
 }
 
 SystemManager::~SystemManager()
@@ -49,9 +56,15 @@ void SystemManager::update()
 {
     if(mMainWindow->isPlaying)
     {
+        //sjekker om det er noen input for spilleren
         checkPlayerInput();
+        //Kalkulerer høyden etter hvor spilleren er på planet.
         mComponentSystem->updateHeightAndBarycentricCheck(player);
-        intervalCalculationHeight++;
+
+        //Regner ut bevegelsene til NPC og sjekker kollisjon på items
+        calcNPCBehavior();
+        //Passer på at NPC sin høyde blir riktig i forhold til plassering på planet.
+         mComponentSystem->updateHeightAndBarycentricCheck(numNPC);
     }
     mRenderSystem->update();
 
@@ -113,4 +126,66 @@ void SystemManager::checkPlayerInput()
 
         mComponentSystem->move(player,playerPos);
     }
+}
+
+void SystemManager::calcNPCBehavior()
+{
+        for(int i = 0; i< items.size(); i++)
+        {
+            if(checkCollision(player, items.at(i)->eID) == true)
+            {
+                //Collision
+                collisionHandling(items.at(i)->eID,i);
+                //Update the points in NPC:
+                setItemsPosition();
+                mNPC->updatePoints(endPts,itemsPosition);
+            }
+        }
+
+
+}
+
+bool SystemManager::checkCollision(int EID, int otherEID)
+{
+    return  mCollisionSystem->collisionCheck(EID, otherEID);
+}
+
+bool SystemManager::collisionHandling(int otherEID, int index)
+{
+    //Set render to the object to false
+    mComponentSystem->getRenderCompWithEId(otherEID)->isRendering = false;
+     //Set collision to false
+    mComponentSystem->getCollCompWithEId(otherEID)->isColliding = false;
+    // remove from items
+    items.erase(items.begin()+index);
+
+}
+
+void SystemManager::setItemsPosition()
+{
+    itemsPosition.clear();
+    for(auto it: items)
+    {
+        itemsPosition.push_back(it->position());
+    }
+}
+
+void SystemManager::setEndPts(const std::array<gsl::Vector3D, 2> &value)
+{
+    endPts = value;
+}
+
+void SystemManager::setItems(const std::vector<TransformComponent *> &value)
+{
+    items = value;
+}
+
+void SystemManager::setPlayer(int value)
+{
+    player = value;
+}
+
+void SystemManager::setNPC(int value)
+{
+    numNPC = value;
 }
