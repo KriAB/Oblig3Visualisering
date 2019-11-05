@@ -41,6 +41,10 @@ public:
     void calcNPCBehavior();
     bool checkCollision(int EID, int otherEID);
     bool collisionHandling(int otherEID, int index);
+    int getNumNPC() const;
+
+    std::vector<gsl::Vector3D> getItemsPosition() const;
+
 private:
     RenderSystem * mRenderSystem{nullptr};
     ComponentSystem * mComponentSystem{nullptr};
@@ -52,14 +56,12 @@ private:
     RenderWindow *mRenderWindow{nullptr};
     Shader *mShaderProgram[4]{nullptr};
 
-
-
     int player{-1};
     int numNPC{-1};
 
-    std::vector<TransformComponent*> items;
+    std::vector<TransformComponent*> mItems;
     std::vector<gsl::Vector3D> itemsPosition;
-    std::array<gsl::Vector3D,2> endPts{gsl::Vector3D{0,2,0}, gsl::Vector3D(20,2,20)};
+    std::array<gsl::Vector3D,2> endPts{gsl::Vector3D{1,2,1}, gsl::Vector3D(20,2,20)};
 
     //To limit the calculation, so that it does not lag.
     int intervalCalculationHeight{0};

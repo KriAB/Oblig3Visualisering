@@ -17,7 +17,7 @@ public:
 
     void setKnotsAndControlPoints( std::vector<gsl::Vector3D> controlPoints);
     gsl::Vector3D evaluateBSpline(int my, float x);
-    float findKnotInterval(float x);
+    float findKnotInterval(int numberOfKnots);
     gsl::Vector3D evaluateBSpline(int degree, int startKnot, float x);
     void makeKnots();
     gsl::Vector3D makePatrolPoint(float x, std::vector<gsl::Vector3D> controlpoints );

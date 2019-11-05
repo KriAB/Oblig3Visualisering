@@ -25,17 +25,20 @@ SystemManager::SystemManager(RenderWindow *renderwindow, MainWindow *mainwindow,
     mTransformSystem = new TransformSystem(mComponentSystem);
 
 
-
     if(mComponentSystem->getInputComponent().at(0)!= nullptr)
         player = mComponentSystem->getInputComponent().at(0)->eID;
 
-
     setItemsPosition();
-    mNPC = new NPC(endPts ,itemsPosition);
+    mNPC = new NPC(endPts ,itemsPosition, this);
+    mNPC->updatePoints(itemsPosition);
+    mNPC->make_path(3000); // 3000 setter antall punkter.
 }
 
 SystemManager::~SystemManager()
 {
+    delete mNPC;
+    mNPC = nullptr;
+
     delete mCollisionSystem;
     mCollisionSystem = nullptr;
 
@@ -130,19 +133,19 @@ void SystemManager::checkPlayerInput()
 
 void SystemManager::calcNPCBehavior()
 {
-        for(int i = 0; i< items.size(); i++)
+        for(int i = 0; i< mItems.size(); i++)
         {
-            if(checkCollision(player, items.at(i)->eID) == true)
+            if(checkCollision(player, mItems.at(i)->eID) == true)
             {
                 //Collision
-                collisionHandling(items.at(i)->eID,i);
+                collisionHandling(mItems.at(i)->eID,i);
                 //Update the points in NPC:
                 setItemsPosition();
-                mNPC->updatePoints(endPts,itemsPosition);
+                mNPC->updatePoints(itemsPosition);
+                mNPC->isItemTaken = true;
             }
         }
-
-
+        mNPC->gameRunner(20);
 }
 
 bool SystemManager::checkCollision(int EID, int otherEID)
@@ -157,14 +160,24 @@ bool SystemManager::collisionHandling(int otherEID, int index)
      //Set collision to false
     mComponentSystem->getCollCompWithEId(otherEID)->isColliding = false;
     // remove from items
-    items.erase(items.begin()+index);
+    mItems.erase(mItems.begin()+index);
 
+}
+
+int SystemManager::getNumNPC() const
+{
+    return numNPC;
+}
+
+std::vector<gsl::Vector3D> SystemManager::getItemsPosition() const
+{
+    return itemsPosition;
 }
 
 void SystemManager::setItemsPosition()
 {
     itemsPosition.clear();
-    for(auto it: items)
+    for(auto it: mItems)
     {
         itemsPosition.push_back(it->position());
     }
@@ -177,7 +190,7 @@ void SystemManager::setEndPts(const std::array<gsl::Vector3D, 2> &value)
 
 void SystemManager::setItems(const std::vector<TransformComponent *> &value)
 {
-    items = value;
+    mItems = value;
 }
 
 void SystemManager::setPlayer(int value)

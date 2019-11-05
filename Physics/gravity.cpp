@@ -215,7 +215,7 @@ void Gravity::checkBarycentricCoordinates(gsl::Vector3D mTargetCoordinates)
     }
     else
     {
-        std::cout << "Not within the area" << std::endl;
+       // std::cout << "Not within the area" << std::endl;
         height =1;
     }
 }
@@ -250,7 +250,7 @@ void Gravity::checkBarycentricCoordinatesNoNeighbours(gsl::Vector3D mTargetCoord
         }
         else
         {
-            std::cout << "Not within the area of triangles!" << std::endl;
+          //  std::cout << "Not within the area of triangles!" << std::endl;
 
             foundTriangle = false;
         }

@@ -2,6 +2,7 @@
 #define NPC_H
 #include "innpch.h"
 #include <queue>
+class SystemManager;
 
 class BSplineCurve;
 
@@ -20,8 +21,8 @@ enum NPSEvents
 class NPC
 {
 public:
-    NPC();
-    NPC(std::array<gsl::Vector3D,2> EndP, std::vector<gsl::Vector3D> itemP);
+
+    NPC(std::array<gsl::Vector3D,2> EndP, std::vector<gsl::Vector3D> itemP, SystemManager *systemManager);
     ~NPC();
 
     //Sett kontrollpunkter med items og endepunkter 1.time
@@ -29,6 +30,7 @@ public:
     void setControlPoint();
 
 
+    void gameRunner(int numberOfPoints);
 
     //FSM part (Final State Machine)
     //
@@ -41,15 +43,20 @@ public:
     void draw();
 
     //Updating the points, if ex some is taken by the player etc. Should only be executed if a point is gone. Need to do this in SystemManager.
-    void updatePoints(std::array<gsl::Vector3D, 2> EndP, std::vector<gsl::Vector3D> itemP);
+    void updatePoints(std::vector<gsl::Vector3D> itemP);
 
     void sortIndex();
+
+    void build_path_Item_not_taken();
+    void build_path_Item_taken();
+    std::vector<gsl::Vector3D> make_path(int numberOfPoints);
+    bool isItemTaken{false};
 private:
     BSplineCurve * mBSplineCurve;
     gsl::Vector3D playerPosition;
 
     //FSM part
-    int state{0};
+    int state{1};
     //NPC får sender en notifikasjon til seg selv hvis et object er borte
     //NPC sender notifikasjon om spiller oppdaget.
     //NPC sender notifikasjon om endepunkt er nådd.
@@ -61,7 +68,7 @@ private:
     //elapsed_time er en parameter:
     // 0 <= elapsed_time <3 i dette tilfellet
 
-    void build_path();
+
     // Lage en (ny) bane for patruljering
     //gjøre en permutasjon av kontrollpunktene(kun items, ikke endepunkter) Dette vil si at man bytter om på rekkefølgen til kontrollpunktene
     //vikting å ikke endre endepunktene
@@ -79,6 +86,15 @@ private:
     std::vector<gsl::Vector3D> controllPoints;
     //for build_path();
     int iterator{0};
+
+    std::vector<gsl::Vector3D> path;
+
+    SystemManager *mSystemManager{nullptr};
+
+  //For path
+    int mNumberOfPoints;
+
+    int indexInPath{0};
 
 };
 
