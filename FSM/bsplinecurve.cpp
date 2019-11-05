@@ -72,7 +72,7 @@ void BSplineCurve::makeKnots()
         t.push_back(0);
         t.push_back(0);
 
-        float interval = findKnotInterval(0);
+        float interval = findKnotInterval(numberOfKnots);
         if(interval >= 0)
         {
             int temp = 1;
@@ -140,14 +140,14 @@ gsl::Vector3D BSplineCurve::evaluateBSpline(int my, float x)
     return a[0];
 }
 
-float BSplineCurve::findKnotInterval(float x)
+float BSplineCurve::findKnotInterval(int numberOfKnots)
 {
     float numberInMiddle;
     if(d==2)
-        numberInMiddle = b.size() - 6;
+        numberInMiddle = numberOfKnots - 6;
 
     if(d==1)
-        numberInMiddle = b.size() - 4;
+        numberInMiddle = numberOfKnots - 4;
     return (1/ (numberInMiddle + 1));
 
 }

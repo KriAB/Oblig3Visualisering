@@ -10,7 +10,6 @@ CollisionSystem::CollisionSystem(ComponentSystem *compSyst)
 
 bool CollisionSystem::collisionCheck(int EID, int otherEID)
 {
-
     CollisionComponent *thisCol = compSys->getCollCompWithEId(EID); //finne i componentsystems
     CollisionComponent *otherCol = compSys->getCollCompWithEId(otherEID);
 
