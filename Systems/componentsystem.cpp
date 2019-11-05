@@ -5,10 +5,12 @@
 #include "mainwindow.h"
 #include "shader.h"
 #include "Physics/gravity.h"
+#include "systemmanager.h"
 
-ComponentSystem::ComponentSystem(RenderWindow *renderwindow, MainWindow *mainWindow, Shader * shaderProgram) : mRenderWindow(renderwindow), mMainWindow(mainWindow),   mShaderProgram{shaderProgram}
+ComponentSystem::ComponentSystem(RenderWindow *renderwindow, MainWindow *mainWindow, Shader * shaderProgram, SystemManager *systemManager) : mRenderWindow(renderwindow), mMainWindow(mainWindow),   mShaderProgram{shaderProgram}
 {
     mResourceFactory = new ResourceFactory;
+    mSystemManager = systemManager;
     mResourceFactory->mRenderWindow = mRenderWindow;
     makeScene();
     mScene = new Scene(this);
@@ -84,36 +86,50 @@ void ComponentSystem::makeScene()
     addEntity("Cube", "Default", "OBB", gsl::Vector3D{2,2,2});
     updateHeightAndBarycentricCheck(1); // setter høyden riktig i forhold til planet, så den ikke svever.
     //mResourceFactory->addChild(0,1);
+    items.push_back(getTransCompWithEId(1));
 
     //Item 2 i forhold til b-spline
     addEntity("Cube", "Default", "OBB", gsl::Vector3D{20,2,26});
     updateHeightAndBarycentricCheck(2);
+    items.push_back(getTransCompWithEId(2));
 
     //Item 3 i forhold til b-spline
     addEntity("Cube", "Default", "OBB", gsl::Vector3D{4,2,26});
     updateHeightAndBarycentricCheck(3);
+    items.push_back(getTransCompWithEId(3));
 
     //Item 4 i forhold til b-spline
     addEntity("Cube", "Default", "OBB", gsl::Vector3D{20,2,4});
     updateHeightAndBarycentricCheck(4);
+    items.push_back(getTransCompWithEId(4));
 
     //Player
-    addEntity("Ball", "Default", "BS", gsl::Vector3D{4,2,8});
+    addEntity("Ball", "Default", "BS", gsl::Vector3D{20,2,8});
     updateHeightAndBarycentricCheck(5);
     mInputComponent.push_back(new InputComponent(5,InputMovementTypes::MOVE_UP, InputMovementTypes::MOVE_DOWN, InputMovementTypes::MOVE_LEFT,InputMovementTypes::MOVE_RIGHT, InputFireTypes::NO_FIRE));
+    mSystemManager->setPlayer(5); //setter denne som Player
+    //NPC:
+
+    addEntity("Ball", "Default", "BS", gsl::Vector3D{4,2,8});
+    updateHeightAndBarycentricCheck(6);
+    mSystemManager->setNPC(6); //Setter denne som NPC
+
+    //Setter items til B-spline
+    mSystemManager->setItems(items);
+
 }
 
 void ComponentSystem::move(int EID, gsl::Vector3D translate)
 {
-   TransformComponent* trans = getTransCompWithEId(EID);
-   if(trans != nullptr)
-   {
-       trans->translate(translate);
-   }
-   else
-   {
-       std::cout << "No TransformComponent with Eid: " << EID << std::endl;
-   }
+    TransformComponent* trans = getTransCompWithEId(EID);
+    if(trans != nullptr)
+    {
+        trans->translate(translate);
+    }
+    else
+    {
+        std::cout << "No TransformComponent with Eid: " << EID << std::endl;
+    }
 }
 
 
@@ -312,7 +328,7 @@ void ComponentSystem::updateHeightAndBarycentricCheck(int EIDTarget)
     {
         float heigth = mGravity->getHeight();
 
-    //    std::cout << "Cube " <<EIDTarget << " height: " << getTransCompWithEId(EIDTarget)->matrix().getPosition().y << "Calculated height: " << heigth << std::endl;
+        //    std::cout << "Cube " <<EIDTarget << " height: " << getTransCompWithEId(EIDTarget)->matrix().getPosition().y << "Calculated height: " << heigth << std::endl;
         getTransCompWithEId(EIDTarget)->matrix().setHeightY(heigth+getMeshCompWithEId(EIDTarget)->radiusY());
 
     }

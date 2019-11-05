@@ -20,7 +20,7 @@ private:
 
     //Trengs ikke for spillet
     bool collisionCheckOBB_OBB(CollisionComponent* thisCol, CollisionComponent *otherCol, TransformComponent *otherTrans, TransformComponent *thisTrans);
-
+    bool collisionCheckBS_OBB(CollisionComponent* thisCol, CollisionComponent *otherCol, TransformComponent *otherTrans, TransformComponent *thisTrans);
 
     ComponentSystem *compSys{nullptr};
 };
