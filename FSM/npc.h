@@ -28,8 +28,6 @@ public:
     //Fylle inn kontrollpunker "controllPoints"
     void setControlPoint();
 
-    void makeKnots();
-
 
 
     //FSM part (Final State Machine)
