@@ -15,11 +15,12 @@ public:
     void initVertexBufferObjects();
     void draw(GLint positionAttribute, GLint colorAttribute, GLint textureAttribute=-1);
 
-    void setKnotsAndControlPoints(std::vector<float> knots, std::vector<gsl::Vector3D> points);
+    void setKnotsAndControlPoints( std::vector<gsl::Vector3D> controlPoints);
     gsl::Vector3D evaluateBSpline(int my, float x);
-    int findKnotInterval(float x);
+    float findKnotInterval(float x);
     gsl::Vector3D evaluateBSpline(int degree, int startKnot, float x);
-
+    void makeKnots();
+    int calcNumberOfKnots();
 
 private:
     std::vector<gsl::Vector3D> b;      // control points

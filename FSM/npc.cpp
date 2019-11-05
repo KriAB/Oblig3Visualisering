@@ -47,7 +47,7 @@ NPC::~NPC()
 
 void NPC::setControlPoint()
 {
-   //clean up
+    //clean up
     controllPoints.clear();
     itemsIndex.clear();
 
@@ -64,13 +64,16 @@ void NPC::setControlPoint()
     }
 }
 
-void NPC::makeKnots()
-{
-    //Lag skjøter basert på antall controllpunker(endepunkter)
-}
+
+//Lag skjøter basert på antall controllpunker(endepunkter)
+//Antall knots = n + d +1 når t={t0}^n+d
+//Vector knot
+//n = antall kontrollpunkter
+//d = degree
 
 void NPC::patrol()
 {
+
     //Vite om Kontrollpunkt, Endepunkt
     //if nådd endepunkt
     // notify(0)
